@@ -1,0 +1,5 @@
+com\mycompany\movieapp\App.class
+com\mycompany\movieapp\Director.class
+com\mycompany\movieapp\Movie.class
+com\mycompany\movieapp\DBCPDataSource.class
+com\mycompany\movieapp\Scherm.class
