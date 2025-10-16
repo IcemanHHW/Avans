@@ -9,9 +9,9 @@ public class DBCPDataSource {
     private static BasicDataSource ds = new BasicDataSource();
 
     static {
-        ds.setUrl("jdbc:mysql://localhost:3306/movies_db?useSSL=false"); //Vul hier de naam van de database in op de plek van 'blok1'
-        ds.setUsername("maartenk"); // vul hier de gebruikersnaam in
-        ds.setPassword("nl1702SR!#"); // vul hier het wachtwoord in
+        ds.setUrl("jdbc:mysql://localhost:3306/brp1?useSSL=false");
+        ds.setUsername("brp1_login");
+        ds.setPassword("Taart1234");
         ds.setMinIdle(5);
         ds.setMaxIdle(10);
         ds.setMaxOpenPreparedStatements(100);
