@@ -5,6 +5,10 @@ public class FysioAfspraak {
     private int patient_id;
     private int datum_id;
 
+    private String fysio_name;
+    private String patient_name;
+    private String datum_date;
+
     public FysioAfspraak() {
 
     }
@@ -31,5 +35,34 @@ public class FysioAfspraak {
 
     public void setDatum_id(int datum_id) {
         this.datum_id = datum_id;
+    }
+
+    public String getFysio_name() {
+        return fysio_name;
+    }
+
+    public void setFysio_name(String fysio_name) {
+        this.fysio_name = fysio_name;
+    }
+
+    public String getPatient_name() {
+        return patient_name;
+    }
+
+    public void setPatient_name(String patient_name) {
+        this.patient_name = patient_name;
+    }
+
+    public String getDatum_date() {
+        return datum_date;
+    }
+
+    public void setDatum_date(String datum_date) {
+        this.datum_date = datum_date;
+    }
+
+    @Override
+    public String toString() {
+        return fysio_name + " " +  patient_name + " " +  datum_date;
     }
 }

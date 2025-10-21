@@ -42,8 +42,8 @@ public class SchermPatientAdresGegevens {
                a.anm AS adres_name,
                w.wpnm AS woonplaats_name,
         FROM patientenadresgegevens pag
-        JOIN patienten p ON (f.id = pag.patient_id)
-        JOIN adressen a ON (s.id = pag.adres_id)
+        JOIN patienten p ON (p.id = pag.patient_id)
+        JOIN adressen a ON (a.id = pag.adres_id)
         JOIN woonplaatsen w ON (w.id = pag.woonplaats_id)
     """);
             while (r.next()) {
@@ -110,7 +110,7 @@ public class SchermPatientAdresGegevens {
 
         deleteButton.setOnAction(event -> {
             PatientAdresGegevens selectedItem = listview.getSelectionModel().getSelectedItem();
-            int iResult = updateData("delete FROM fysiosmetspecs " +
+            int iResult = updateData("delete FROM patientenadresgegevens " +
                     "WHERE patient_id = " + selectedItem.getPatient_id() + " AND adres_id = " + selectedItem.getAdres_id() + " AND woonplaats_id = " + selectedItem.getWoonplaats_id());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
