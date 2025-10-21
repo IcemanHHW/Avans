@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 import nl.kampmeijer.fgt1_fysio.DBCPDataSource;
 import nl.kampmeijer.fgt1_fysio.classes.FysioMetSpec;
 import nl.kampmeijer.fgt1_fysio.classes.Fysiotherapeut;
+import nl.kampmeijer.fgt1_fysio.classes.PatientAdresGegevens;
 import nl.kampmeijer.fgt1_fysio.classes.Specialisatie;
 
 import java.sql.Connection;
