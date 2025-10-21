@@ -1,4 +1,4 @@
-package nl.kampmeijer.fgt1_fysio;
+package nl.kampmeijer.fgt1_fysio.classes;
 
 public class PatientAdresGegevens {
     private int patient_id;

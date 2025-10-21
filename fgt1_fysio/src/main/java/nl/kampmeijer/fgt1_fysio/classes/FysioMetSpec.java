@@ -1,4 +1,4 @@
-package nl.kampmeijer.fgt1_fysio;
+package nl.kampmeijer.fgt1_fysio.classes;
 
 public class FysioMetSpec {
     private int fysio_id;
