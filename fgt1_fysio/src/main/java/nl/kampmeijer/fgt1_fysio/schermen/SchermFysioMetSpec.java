@@ -7,7 +7,6 @@ import javafx.scene.layout.Pane;
 import nl.kampmeijer.fgt1_fysio.DBCPDataSource;
 import nl.kampmeijer.fgt1_fysio.classes.FysioMetSpec;
 import nl.kampmeijer.fgt1_fysio.classes.Fysiotherapeut;
-import nl.kampmeijer.fgt1_fysio.classes.PatientAdresGegevens;
 import nl.kampmeijer.fgt1_fysio.classes.Specialisatie;
 
 import java.sql.Connection;
@@ -110,6 +109,14 @@ public class SchermFysioMetSpec {
         root.getChildren().addAll(addButton, fysioBox, specBox, updateButton, deleteButton, listview);
     }
 
+    /**
+     * Loads the list of fysiotherapeuten from the database and populates the fysioBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>fysiotherapeuten</strong> table,
+     * maps each record to a Fysiotherapeut object, and adds them to the fysioBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadFysios() {
         ResultSet r = null;
         try {
@@ -126,6 +133,14 @@ public class SchermFysioMetSpec {
         }
     }
 
+    /**
+     * Loads the list of specialisaties from the database and populates the specBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>specialisaties</strong> table,
+     * maps each record to a Specialisatie object, and adds them to the specBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadSpecialisaties() {
         ResultSet r = null;
         try {
@@ -142,6 +157,13 @@ public class SchermFysioMetSpec {
         }
     }
 
+    /**
+     * Executes the given SQL query and retrieves the resulting data from the database.
+     *
+     * @param sql the SQL query to be executed
+     * @return a ResultSet object containing the data retrieved from the query,
+     *         or null if an error occurs or the query returns no results
+     */
     public ResultSet getData(String sql) {
         ResultSet result = null;
         try {
@@ -155,6 +177,12 @@ public class SchermFysioMetSpec {
         return result;
     }
 
+    /**
+     * Executes the given SQL insert statement to insert data into the database.
+     *
+     * @param insertStatement the SQL insert statement to be executed
+     * @return the number of rows affected by the insert operation
+     */
     public int insertData(String insertStatement) {
         int result = 0;
         try {
@@ -168,6 +196,12 @@ public class SchermFysioMetSpec {
         return result;
     }
 
+    /**
+     * Executes the given SQL update statement against the database.
+     *
+     * @param updateStatement the SQL update statement to be executed (e.g., UPDATE or DELETE statements)
+     * @return the number of rows affected by the update operation
+     */
     public int updateData(String updateStatement) {
         int result = 0;
         try {

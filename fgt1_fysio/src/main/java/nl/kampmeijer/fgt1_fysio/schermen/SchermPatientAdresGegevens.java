@@ -121,7 +121,14 @@ public class SchermPatientAdresGegevens {
 
         root.getChildren().addAll(addButton, patientBox, adresBox, woonplaatsBox, updateButton, deleteButton, listview);
     }
-
+    /**
+     * Loads the list of patienten from the database and populates the patientBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>patient</strong> table,
+     * maps each record to a Patient object, and adds them to the patientBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadPatients() {
         ResultSet r = null;
         try {
@@ -137,7 +144,14 @@ public class SchermPatientAdresGegevens {
             se.printStackTrace();
         }
     }
-
+    /**
+     * Loads the list of adressen from the database and populates the adresBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>adressen</strong> table,
+     * maps each record to a Adres object, and adds them to the adresBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadAdresses() {
         ResultSet r = null;
         try {
@@ -153,7 +167,14 @@ public class SchermPatientAdresGegevens {
             se.printStackTrace();
         }
     }
-
+    /**
+     * Loads the list of woonplaatsen from the database and populates the woonplaatsBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>woonplaatsen</strong> table,
+     * maps each record to a Woonplaats object, and adds them to the woonplaatsBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadWoonplaatsen() {
         ResultSet r = null;
         try {
@@ -170,6 +191,13 @@ public class SchermPatientAdresGegevens {
         }
     }
 
+    /**
+     * Executes the given SQL query and retrieves the resulting data from the database.
+     *
+     * @param sql the SQL query to be executed
+     * @return a ResultSet object containing the data retrieved from the query,
+     *         or null if an error occurs or the query returns no results
+     */
     public ResultSet getData(String sql) {
         ResultSet result = null;
         try {
@@ -183,6 +211,12 @@ public class SchermPatientAdresGegevens {
         return result;
     }
 
+    /**
+     * Executes the given SQL insert statement to insert data into the database.
+     *
+     * @param insertStatement the SQL insert statement to be executed
+     * @return the number of rows affected by the insert operation
+     */
     public int insertData(String insertStatement) {
         int result = 0;
         try {
@@ -196,6 +230,12 @@ public class SchermPatientAdresGegevens {
         return result;
     }
 
+    /**
+     * Executes the given SQL update statement against the database.
+     *
+     * @param updateStatement the SQL update statement to be executed (e.g., UPDATE or DELETE statements)
+     * @return the number of rows affected by the update operation
+     */
     public int updateData(String updateStatement) {
         int result = 0;
         try {

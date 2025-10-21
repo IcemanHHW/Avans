@@ -121,7 +121,14 @@ public class SchermFysioAfspraak {
 
         root.getChildren().addAll(addButton, fysioBox, patientBox, datumBox, updateButton, deleteButton, listview);
     }
-
+    /**
+     * Loads the list of fysiotherapeuten from the database and populates the fysioBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>fysiotherapeuten</strong> table,
+     * maps each record to a Fysiotherapeut object, and adds them to the fysioBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadFysios() {
         ResultSet r = null;
         try {
@@ -137,7 +144,14 @@ public class SchermFysioAfspraak {
             se.printStackTrace();
         }
     }
-
+    /**
+     * Loads the list of patienten from the database and populates the patientenBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>patienten</strong> table,
+     * maps each record to a Patient object, and adds them to the patientBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadPatients() {
         ResultSet r = null;
         try {
@@ -153,7 +167,14 @@ public class SchermFysioAfspraak {
             se.printStackTrace();
         }
     }
-
+    /**
+     * Loads the list of datums from the database and populates the datumBox dropdown
+     * with the retrieved data. This method retrieves all the records from the <strong>datums</strong> table,
+     * maps each record to a Datum object, and adds them to the datumBox.
+     * <p>
+     * If an error occurs during the database operation, an error message is logged to the
+     * standard output and the stack trace of the exception is printed.
+     */
     private void loadDatums() {
         ResultSet r = null;
         try {
@@ -170,6 +191,13 @@ public class SchermFysioAfspraak {
         }
     }
 
+    /**
+     * Executes the given SQL query and retrieves the resulting data from the database.
+     *
+     * @param sql the SQL query to be executed
+     * @return a ResultSet object containing the data retrieved from the query,
+     *         or null if an error occurs or the query returns no results
+     */
     public ResultSet getData(String sql) {
         ResultSet result = null;
         try {
@@ -183,6 +211,12 @@ public class SchermFysioAfspraak {
         return result;
     }
 
+    /**
+     * Executes the given SQL insert statement to insert data into the database.
+     *
+     * @param insertStatement the SQL insert statement to be executed
+     * @return the number of rows affected by the insert operation
+     */
     public int insertData(String insertStatement) {
         int result = 0;
         try {
@@ -196,6 +230,12 @@ public class SchermFysioAfspraak {
         return result;
     }
 
+    /**
+     * Executes the given SQL update statement against the database.
+     *
+     * @param updateStatement the SQL update statement to be executed (e.g., UPDATE or DELETE statements)
+     * @return the number of rows affected by the update operation
+     */
     public int updateData(String updateStatement) {
         int result = 0;
         try {
