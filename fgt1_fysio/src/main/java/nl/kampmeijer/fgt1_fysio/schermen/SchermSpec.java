@@ -51,7 +51,11 @@ public class SchermSpec {
             if (!addFieldText.isEmpty()) {
                 int iResult = insertData("insert into specialisaties(spec) values ('" + addFieldText + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Specialisatie newSpec = new Specialisatie();
+                newSpec.setSpec(addFieldText);
+                listview.getItems().add(newSpec);
+                textField.clear();
+
             }
         });
 
@@ -64,6 +68,7 @@ public class SchermSpec {
                 System.out.println(iResult + " rij aangepast");
                 selectedItem.setSpec(updateFieldText);
                 listview.refresh();
+                textField.clear();
             }
         });
 

@@ -51,7 +51,10 @@ public class SchermFysio {
             if (!addFieldText.isEmpty()) {
                 int iResult = insertData("insert into fysiotherapeuten(fysnm) values ('" + addFieldText + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Fysiotherapeut newFysio = new Fysiotherapeut();
+                newFysio.setFysnm(addFieldText);
+                listview.getItems().add(newFysio);
+                textField.clear();
             }
         });
 
@@ -64,6 +67,7 @@ public class SchermFysio {
                 System.out.println(iResult + " rij aangepast");
                 selectedItem.setFysnm(updateFieldText);
                 listview.refresh();
+                textField.clear();
             }
         });
 

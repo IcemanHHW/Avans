@@ -51,7 +51,10 @@ public class SchermPatient {
             if (!addFieldText.isEmpty()) {
                 int iResult = insertData("insert into patienten(pnm) values ('" + addFieldText + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Patient newPatient = new Patient();
+                newPatient.setPnm(addFieldText);
+                listview.getItems().add(newPatient);
+                textField.clear();
             }
         });
 
@@ -64,6 +67,7 @@ public class SchermPatient {
                 System.out.println(iResult + " rij aangepast");
                 selectedItem.setPnm(updateFieldText);
                 listview.refresh();
+                textField.clear();
             }
         });
 

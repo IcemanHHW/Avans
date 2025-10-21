@@ -1,8 +1,8 @@
 package nl.kampmeijer.fgt1_fysio.schermen;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import nl.kampmeijer.fgt1_fysio.DBCPDataSource;
 import nl.kampmeijer.fgt1_fysio.classes.Datum;
@@ -11,13 +11,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class SchermDatum {
     private Button addButton = new Button("Toevoegen");
     private Button updateButton = new Button("Aanpassen");
     private Button deleteButton = new Button("Verwijderen");
-    private TextField textField = new TextField();
+    private DatePicker datePicker = new DatePicker();
     private ListView<Datum> listview = new ListView();
     private ArrayList<Datum> allDatums = new ArrayList();
 
@@ -25,7 +26,7 @@ public class SchermDatum {
         addButton.relocate(290, 90);
         updateButton.relocate(390, 90);
         deleteButton.relocate(300, 150);
-        textField.relocate(300, 50);
+        datePicker.relocate(300, 50);
 
         ResultSet r = null;
         try {
@@ -46,23 +47,25 @@ public class SchermDatum {
         }
 
         addButton.setOnAction(event -> {
-            String addFieldText = textField.getText();
+             LocalDate addDate = datePicker.getValue();
 
-            if (!addFieldText.isEmpty()) {
-                int iResult = insertData("insert into datums(dtm) values ('" + addFieldText + "')");
+            if (addDate != null) {
+                int iResult = insertData("insert into datums(dtm) values ('" + addDate + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Datum newDatum = new Datum();
+                newDatum.setDtm(addDate.toString());
+                listview.getItems().add(newDatum);
             }
         });
 
         updateButton.setOnAction(event -> {
-            String updateFieldText = textField.getText();
+            LocalDate updateDate = datePicker.getValue();
             Datum selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (!updateFieldText.isEmpty()) {
-                int iResult = updateData("UPDATE datums SET dtm = '" + updateFieldText + "' WHERE id = " + selectedItem.getId());
+            if (updateDate != null) {
+                int iResult = updateData("UPDATE datums SET dtm = '" + updateDate + "' WHERE id = " + selectedItem.getId());
                 System.out.println(iResult + " rij aangepast");
-                selectedItem.setDtm(updateFieldText);
+                selectedItem.setDtm(String.valueOf(updateDate));
                 listview.refresh();
             }
         });
@@ -75,7 +78,7 @@ public class SchermDatum {
             listview.refresh();
         });
 
-        root.getChildren().addAll(addButton, textField, updateButton, deleteButton, listview);
+        root.getChildren().addAll(addButton, datePicker, updateButton, deleteButton, listview);
     }
 
     public ResultSet getData(String sql) {

@@ -51,7 +51,10 @@ public class SchermWoonplaats {
             if (!addFieldText.isEmpty()) {
                 int iResult = insertData("insert into woonplaatsen(wpnm) values ('" + addFieldText + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Woonplaats newWoonplaats = new Woonplaats();
+                newWoonplaats.setWpnm(addFieldText);
+                listview.getItems().add(newWoonplaats);
+                textField.clear();
             }
         });
 
@@ -64,6 +67,7 @@ public class SchermWoonplaats {
                 System.out.println(iResult + " rij aangepast");
                 selectedItem.setWpnm(updateFieldText);
                 listview.refresh();
+                textField.clear();
             }
         });
 

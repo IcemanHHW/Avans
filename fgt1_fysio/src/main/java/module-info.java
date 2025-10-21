@@ -4,6 +4,7 @@ module nl.kampmeijer.fgt1_fysio {
     requires java.sql;
     requires org.apache.commons.dbcp2;
     requires javafx.graphics;
+    requires nl.kampmeijer.fgt1_fysio;
 
 
     opens nl.kampmeijer.fgt1_fysio to javafx.fxml;

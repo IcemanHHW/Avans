@@ -51,7 +51,10 @@ public class SchermAdres {
             if (!addFieldText.isEmpty()) {
                 int iResult = insertData("insert into adressen(anm) values ('" + addFieldText + "')");
                 System.out.println(iResult + " rij toegevoegd");
-                listview.refresh();
+                Adres newAdres = new Adres();
+                newAdres.setAnm(addFieldText);
+                listview.getItems().add(newAdres);
+                textField.clear();
             }
         });
 
@@ -64,6 +67,7 @@ public class SchermAdres {
                 System.out.println(iResult + " rij aangepast");
                 selectedItem.setAnm(updateFieldText);
                 listview.refresh();
+                textField.clear();
             }
         });
 
