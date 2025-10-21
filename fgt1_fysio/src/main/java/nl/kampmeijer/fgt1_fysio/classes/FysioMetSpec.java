@@ -4,6 +4,9 @@ public class FysioMetSpec {
     private int fysio_id;
     private int spec_id;
 
+    private String fysio_name;
+    private String spec_type;
+
     public FysioMetSpec() {
 
     }
@@ -22,5 +25,26 @@ public class FysioMetSpec {
 
     public void setSpec_id(int spec_id) {
         this.spec_id = spec_id;
+    }
+
+    public String getSpec_type() {
+        return spec_type;
+    }
+
+    public void setSpec_type(String spec_type) {
+        this.spec_type = spec_type;
+    }
+
+    public String getFysio_name() {
+        return fysio_name;
+    }
+
+    public void setFysio_name(String fysio_name) {
+        this.fysio_name = fysio_name;
+    }
+
+    @Override
+    public String toString() {
+        return fysio_name + " " +  spec_type;
     }
 }
