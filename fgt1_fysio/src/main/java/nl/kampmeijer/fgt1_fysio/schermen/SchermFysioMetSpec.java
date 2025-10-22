@@ -68,7 +68,7 @@ public class SchermFysioMetSpec {
             Specialisatie addSpec = specBox.getSelectionModel().getSelectedItem();
 
             if (addFysio != null && addSpec != null) {
-                int iResult = insertData("insert into fysiosmetspecs(fysio_id, spec_id) values ('" + addFysio.getId() + ", " + addSpec.getId() + "')");
+                int iResult = insertData("INSERT INTO fysiosmetspecs (fysio_id, spec_id) VALUES (" + addFysio.getId() + ", " + addSpec.getId() + ")");
                 System.out.println(iResult + " rij toegevoegd");
                 if (iResult > 0) {
                     FysioMetSpec newFysioMetSpec = new FysioMetSpec();
