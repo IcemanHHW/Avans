@@ -1,4 +1,4 @@
-package nl.kampmeijer.brp1;
+package nl.kampmeijer.brp1.database;
 
 import java.sql.SQLException;
 import java.sql.Connection;
