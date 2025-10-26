@@ -7,4 +7,6 @@ module nl.kampmeijer.brp1 {
 
     opens nl.kampmeijer.brp1 to javafx.fxml;
     exports nl.kampmeijer.brp1;
+    exports nl.kampmeijer.brp1.models;
+    opens nl.kampmeijer.brp1.models to javafx.fxml;
 }

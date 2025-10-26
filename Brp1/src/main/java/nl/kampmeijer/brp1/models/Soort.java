@@ -1,10 +1,19 @@
-package nl.kampmeijer.brp1;
+package nl.kampmeijer.brp1.models;
 
 public class Soort {
+    private int id;
     private String soortnaam;
 
     public Soort() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getSoortnaam() {

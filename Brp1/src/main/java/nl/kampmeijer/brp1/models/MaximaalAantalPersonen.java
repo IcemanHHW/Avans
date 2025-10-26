@@ -1,10 +1,19 @@
-package nl.kampmeijer.brp1;
+package nl.kampmeijer.brp1.models;
 
 public class MaximaalAantalPersonen {
+    private int id;
     private int maximimumnummer;
 
     public MaximaalAantalPersonen() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getMaximimumnummer() {
