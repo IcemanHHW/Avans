@@ -4,6 +4,7 @@ module nl.kampmeijer.brp1 {
     requires java.sql;
     requires org.apache.commons.dbcp2;
     requires javafx.graphics;
+    requires org.jetbrains.annotations;
 
 
     opens nl.kampmeijer.brp1 to javafx.fxml;

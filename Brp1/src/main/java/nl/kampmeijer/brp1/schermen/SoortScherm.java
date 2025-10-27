@@ -6,6 +6,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import nl.kampmeijer.brp1.models.Soort;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -17,11 +18,10 @@ public class SoortScherm {
     private final TextField textField = new TextField();
     private final ListView<Soort> listview = new ListView<>();
 
-    public SoortScherm(GridPane root) {
+    public SoortScherm(@NotNull GridPane root) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
-
 
         root.add(listview, 0, 0, 1, 4);
         root.add(textField, 1, 0);
@@ -49,14 +49,14 @@ public class SoortScherm {
         }
 
         addButton.setOnAction(_ -> {
-            String addFieldText = textField.getText();
+            String input = textField.getText();
 
-            if (!addFieldText.isEmpty()) {
-                int iResult = insertData("INSERT INTO soorten(soortnaam) values ('" + addFieldText + "')");
+            if (!input.isEmpty()) {
+                int iResult = insertData("INSERT INTO soorten(soortnaam) values ('" + input + "')");
                 System.out.println(iResult + " rij toegevoegd");
                 if (iResult > 0) {
                     Soort newSoort = new Soort();
-                    newSoort.setSoortnaam(addFieldText);
+                    newSoort.setSoortnaam(input);
                     listview.getItems().add(newSoort);
                     textField.clear();
                 }
@@ -64,14 +64,19 @@ public class SoortScherm {
         });
 
         updateButton.setOnAction(_ -> {
-            String updateFieldText = textField.getText();
+            String input = textField.getText();
             Soort selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (!updateFieldText.isEmpty()) {
-                int iResult = updateData("UPDATE soorten SET soortnaam = '" + updateFieldText + "' WHERE id = " + selectedItem.getId());
+            if (selectedItem == null) {
+                System.out.println("Selecteer eerst een item om aan te passen.");
+                return;
+            }
+
+            if (!input.isEmpty()) {
+                int iResult = updateData("UPDATE soorten SET soortnaam = '" + input + "' WHERE id = " + selectedItem.getId());
                 System.out.println(iResult + " rij aangepast");
                 if (iResult > 0) {
-                    selectedItem.setSoortnaam(updateFieldText);
+                    selectedItem.setSoortnaam(input);
                     listview.refresh();
                     textField.clear();
                 }
@@ -80,6 +85,12 @@ public class SoortScherm {
 
         deleteButton.setOnAction(_ -> {
             Soort selectedItem = listview.getSelectionModel().getSelectedItem();
+
+            if (selectedItem == null) {
+                System.out.println("Selecteer eerst een item om aan te passen.");
+                return;
+            }
+
             int iResult = updateData("DELETE FROM soorten WHERE id = " + selectedItem.getId());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {

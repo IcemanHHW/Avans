@@ -6,7 +6,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 public class DBCPDataSource {
 
-    private static BasicDataSource ds = new BasicDataSource();
+    private static final BasicDataSource ds = new BasicDataSource();
 
     static {
         ds.setUrl("jdbc:mysql://localhost:3306/brp1?useSSL=false");
