@@ -40,7 +40,7 @@ public class VariantScherm {
                 allVariants.add(v);
             }
         } catch (Exception se) {
-            System.out.println("Fout bij ophalen van Varianten");
+            System.out.println("Fout bij ophalen van varianten");
             se.printStackTrace();
         }
 
