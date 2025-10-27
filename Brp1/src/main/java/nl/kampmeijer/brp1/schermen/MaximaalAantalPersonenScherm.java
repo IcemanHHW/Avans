@@ -30,9 +30,10 @@ public class MaximaalAantalPersonenScherm {
         root.add(updateButton, 1, 2);
         root.add(deleteButton, 1, 3);
 
+        // Only allow numbers
         numberField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
-            if (newText.matches("\\d*")) {
+            if (newText.matches("\\d*")) { // regex for numbers
                 return change;
             }
             return null;

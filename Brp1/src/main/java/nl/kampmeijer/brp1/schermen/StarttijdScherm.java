@@ -36,7 +36,7 @@ public class StarttijdScherm {
         // Only allow HH:mm format
         timeField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
-            if (newText.matches("([01]?\\d|2[0-3]):[0-5]?\\d?")) { // simple HH:mm regex
+            if (newText.matches("([01]?\\d|2[0-3]):[0-5]?\\d?")) { // Regex for HH:mm format
                 return change;
             }
             return null;
