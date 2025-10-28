@@ -107,6 +107,12 @@ public class StarttijdScherm {
 
         deleteButton.setOnAction(_ -> {
             Starttijd selectedItem = listview.getSelectionModel().getSelectedItem();
+
+            if (selectedItem == null) {
+                System.out.println("Selecteer eerst een item om te verwijderen");
+                return;
+            }
+
             int iResult = updateData("DELETE FROM starttijden WHERE id = " + selectedItem.getId());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {

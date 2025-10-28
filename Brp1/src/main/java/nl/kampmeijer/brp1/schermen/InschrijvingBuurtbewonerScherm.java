@@ -17,9 +17,7 @@ public class InschrijvingBuurtbewonerScherm {
     private final Button addButton = new Button("Toevoegen"), updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen");
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<Variant> variantBox = new ComboBox<>();
-    private final ComboBox<Datum> datumComboBox = new ComboBox<>();
-    private final ComboBox<Starttijd> starttijdComboBox = new ComboBox<>();
-    private final ComboBox<Locatie> locatieComboBox = new ComboBox<>();
+    private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
     private final ListView<InschrijvingBuurtbewoner> listview = new ListView<>();
 
@@ -31,10 +29,8 @@ public class InschrijvingBuurtbewonerScherm {
         root.add(listview, 0, 0, 1, 4);
         root.add(soortBox, 1, 0);
         root.add(variantBox, 2, 0);
-        root.add(datumComboBox, 3, 0);
-        root.add(starttijdComboBox, 4, 0);
-        root.add(locatieComboBox, 5, 0);
-        root.add(buurtbewonerComboBox, 6, 0);
+        root.add(optieComboBox, 3, 0);
+        root.add(buurtbewonerComboBox, 4, 0);
         root.add(addButton, 1, 1);
         root.add(updateButton, 1, 2);
         root.add(deleteButton, 1, 3);
@@ -91,50 +87,50 @@ public class InschrijvingBuurtbewonerScherm {
         loadBuurtbewoners();
         loadSoorts();
         loadVariants();
-        loadDatums();
-        loadStarttijds();
-        loadLocaties();
+
+        // When a soort is selected, load its valid options
+        soortBox.setOnAction(_ -> {
+            Soort selectedSoort = soortBox.getSelectionModel().getSelectedItem();
+            if (selectedSoort != null) {
+                loadOptiesForSoort(selectedSoort.getId());
+            } else {
+                optieComboBox.getItems().clear();
+            }
+        });
 
         addButton.setOnAction(_ -> {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
             Variant variant = variantBox.getSelectionModel().getSelectedItem();
-            Datum datum = datumComboBox.getSelectionModel().getSelectedItem();
-            Starttijd starttijd = starttijdComboBox.getSelectionModel().getSelectedItem();
-            Locatie locatie = locatieComboBox.getSelectionModel().getSelectedItem();
+            SoortOptie optie = optieComboBox.getSelectionModel().getSelectedItem();
             Buurtbewoner buurtbewoner = buurtbewonerComboBox.getSelectionModel().getSelectedItem();
 
-            if (soort != null && variant != null && datum != null && starttijd != null && locatie != null && buurtbewoner != null) {
-                int iResult = insertData(
-                        "INSERT INTO inschrijvingenbuurtbewoners(buurtbewoner_id, soort_id, variant_id, datum_id, starttijd_id, locatie_id" + ") " +
-                                "VALUES (" + buurtbewoner.getId() + ", " + soort.getId() + ", " + variant.getId() + ", " + datum.getId() + ", " + starttijd.getId() + ", " + locatie.getId() +  ")");
+            if (soort != null && variant != null && optie != null && buurtbewoner != null) {
+                int iResult = insertData("INSERT INTO inschrijvingenbuurtbewoners (buurtbewoner_id, soort_id, variant_id, datum_id, starttijd_id, locatie_id) " +
+                                "VALUES (" + buurtbewoner.getId() + ", " + soort.getId() + ", " + variant.getId() + ", " + optie.getDatum().getId() + ", " + optie.getStarttijd().getId() + ", " + optie.getLocatie().getId() + ")");
                 System.out.println(iResult + " rij toegevoegd");
 
                 if (iResult > 0) {
                     InschrijvingBuurtbewoner newIB = new InschrijvingBuurtbewoner();
                     newIB.setSoort_name(soort.getSoortnaam());
                     newIB.setVariant_name(variant.getVariantnaam());
-                    newIB.setDatum_date(datum.getDatum());
-                    newIB.setStarttijd_time(starttijd.getStarttijd());
-                    newIB.setLocatie_name(locatie.getLocatienaam());
+                    newIB.setDatum_date(optie.getDatum().getDatum());
+                    newIB.setStarttijd_time(optie.getStarttijd().getStarttijd());
+                    newIB.setLocatie_name(optie.getLocatie().getLocatienaam());
                     newIB.setBuurtbewoner_name(buurtbewoner.getBuurtbewonernaam());
+                    listview.getItems().add(newIB);
                     listview.getItems().add(newIB);
                     soortBox.getSelectionModel().clearSelection();
                     variantBox.getSelectionModel().clearSelection();
-                    datumComboBox.getSelectionModel().clearSelection();
-                    starttijdComboBox.getSelectionModel().clearSelection();
-                    locatieComboBox.getSelectionModel().clearSelection();
+                    optieComboBox.getSelectionModel().clearSelection();
                     buurtbewonerComboBox.getSelectionModel().clearSelection();
                 }
             }
         });
 
-
         updateButton.setOnAction(_ -> {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
             Variant variant = variantBox.getSelectionModel().getSelectedItem();
-            Datum datum = datumComboBox.getSelectionModel().getSelectedItem();
-            Starttijd starttijd = starttijdComboBox.getSelectionModel().getSelectedItem();
-            Locatie locatie = locatieComboBox.getSelectionModel().getSelectedItem();
+            SoortOptie optie = optieComboBox.getSelectionModel().getSelectedItem();
             Buurtbewoner buurtbewoner = buurtbewonerComboBox.getSelectionModel().getSelectedItem();
             InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
 
@@ -143,15 +139,15 @@ public class InschrijvingBuurtbewonerScherm {
                 return;
             }
 
-            if (soort != null && variant != null && datum != null && starttijd != null && locatie != null && buurtbewoner != null) {
+            if (soort != null && variant != null && optie != null && buurtbewoner != null) {
                 int iResult = updateData(
                         "UPDATE inschrijvingenbuurtbewoners SET " +
-                                "buurtbewoner_id = " +  buurtbewoner.getId() + ", " +
+                                "buurtbewoner_id = " + buurtbewoner.getId() + ", " +
                                 "soort_id = " + soort.getId() + ", " +
                                 "variant_id = " + variant.getId() + ", " +
-                                "datum_id = " + datum.getId() + ", " +
-                                "starttijd_id = " + starttijd.getId() + ", " +
-                                "locatie_id = " + locatie.getId() +
+                                "datum_id = " + optie.getDatum().getId() + ", " +
+                                "starttijd_id = " + optie.getStarttijd().getId() + ", " +
+                                "locatie_id = " + optie.getLocatie().getId() +
                                 " WHERE buurtbewoner_id = " + selectedItem.getBuurtbewoner_id() +
                                 " AND soort_id = " + selectedItem.getSoort_id() +
                                 " AND variant_id = " + selectedItem.getVariant_id() +
@@ -160,19 +156,18 @@ public class InschrijvingBuurtbewonerScherm {
                                 " AND locatie_id = " + selectedItem.getLocatie_id()
                 );
                 System.out.println(iResult + " rij aangepast");
+
                 if (iResult > 0) {
                     selectedItem.setSoort_name(soort.getSoortnaam());
                     selectedItem.setVariant_name(variant.getVariantnaam());
-                    selectedItem.setDatum_date(datum.getDatum());
-                    selectedItem.setStarttijd_time(starttijd.getStarttijd());
-                    selectedItem.setLocatie_name(locatie.getLocatienaam());
+                    selectedItem.setDatum_date(optie.getDatum().getDatum());
+                    selectedItem.setStarttijd_time(optie.getStarttijd().getStarttijd());
+                    selectedItem.setLocatie_name(optie.getLocatie().getLocatienaam());
                     selectedItem.setBuurtbewoner_name(buurtbewoner.getBuurtbewonernaam());
                     listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
                     variantBox.getSelectionModel().clearSelection();
-                    datumComboBox.getSelectionModel().clearSelection();
-                    starttijdComboBox.getSelectionModel().clearSelection();
-                    locatieComboBox.getSelectionModel().clearSelection();
+                    optieComboBox.getSelectionModel().clearSelection();
                     buurtbewonerComboBox.getSelectionModel().clearSelection();
                 }
             }
@@ -182,7 +177,7 @@ public class InschrijvingBuurtbewonerScherm {
             InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
 
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+                System.out.println("Selecteer eerst een item om te verwijderen.");
                 return;
             }
 
@@ -196,6 +191,7 @@ public class InschrijvingBuurtbewonerScherm {
                             " AND locatie_id = " + selectedItem.getLocatie_id()
             );
             System.out.println(iResult + " rij verwijderd");
+
             if (iResult > 0) {
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
@@ -251,50 +247,74 @@ public class InschrijvingBuurtbewonerScherm {
         }
     }
 
-    private void loadDatums() {
-        ResultSet r;
+    /**
+     * Loads all available combinations of Datum, Starttijd, and Locatie for the given Soort
+     * that have not yet reached their maximum number of participants.
+     * Fills the {@code optieComboBox} with these available options.
+     * <p>
+     * This method queries the <strong>taartsoortdatumstarttijdlocatie</strong> table and joins it with the
+     * <strong>inschrijvingenbuurtbewoners</strong> and <strong>taartsoortmaxaantalpersonen</strong> tables to count current registrations
+     * and ensure only available slots are displayed.
+     *
+     * @param soortId The ID of the Soort for which to load options.
+     */
+    private void loadOptiesForSoort(int soortId) {
+        optieComboBox.getItems().clear();
         try {
-            r = getData("select * from datums");
+            ResultSet r = getData("""
+                SELECT tsdl.soort_id,
+                       tsdl.datum_id,
+                       tsdl.starttijd_id,
+                       tsdl.locatie_id,
+                       s.soortnaam AS soort_name,
+                       d.datum AS datum_date,
+                       st.starttijd AS starttijd_time,
+                       l.locatienaam AS locatie_name,
+                       COUNT(ib.buurtbewoner_id) AS current_count,
+                       tsmap.maxpers_number
+                FROM taartsoortdatumstarttijdlocatie tsdl
+                JOIN soorten s ON s.id = tsdl.soort_id
+                JOIN datums d ON d.id = tsdl.datum_id
+                JOIN starttijden st ON st.id = tsdl.starttijd_id
+                JOIN locaties l ON l.id = tsdl.locatie_id
+                LEFT JOIN inschrijvingenbuurtbewoners ib
+                    ON ib.soort_id = tsdl.soort_id
+                    AND ib.datum_id = tsdl.datum_id
+                    AND ib.starttijd_id = tsdl.starttijd_id
+                    AND ib.locatie_id = tsdl.locatie_id
+                JOIN taartsoortmaxaantalpersonen tsmap
+                ON tsmap.soort_id = tsdl.soort_id
+                WHERE tsdl.soort_id =\s""" + soortId + """
+                GROUP BY tsdl.soort_id,
+                         tsdl.datum_id,
+                         tsdl.starttijd_id,
+                         tsdl.locatie_id,
+                         s.soortnaam,
+                         d.datum,
+                         st.starttijd,
+                         l.locatienaam,
+                         tsmap.maxpers_number
+                HAVING COUNT(ib.buurtbewoner_id) < tsmap.maxpers_number
+            """);
+
             while (r.next()) {
                 Datum d = new Datum();
-                d.setId(r.getInt("id"));
-                d.setDatum(r.getString("datum"));
-                datumComboBox.getItems().add(d);
-            }
-        } catch (Exception se) {
-            System.out.println("Fout bij ophalen van datums");
-            se.printStackTrace();
-        }
-    }
+                d.setId(r.getInt("datum_id"));
+                d.setDatum(r.getString("datum_date"));
 
-    private void loadStarttijds() {
-        ResultSet r;
-        try {
-            r = getData("select * from starttijden");
-            while (r.next()) {
-                Starttijd s = new Starttijd();
-                s.setId(r.getInt("id"));
-                s.setStarttijd(r.getString("starttijd"));
-                starttijdComboBox.getItems().add(s);
-            }
-        } catch (Exception se) {
-            System.out.println("Fout bij ophalen van starttijden");
-            se.printStackTrace();
-        }
-    }
+                Starttijd st = new Starttijd();
+                st.setId(r.getInt("starttijd_id"));
+                st.setStarttijd(r.getString("starttijd_time"));
 
-    private void loadLocaties() {
-        ResultSet r;
-        try {
-            r = getData("select * from locaties");
-            while (r.next()) {
                 Locatie l = new Locatie();
-                l.setId(r.getInt("id"));
-                l.setLocatienaam(r.getString("locatienaam"));
-                locatieComboBox.getItems().add(l);
+                l.setId(r.getInt("locatie_id"));
+                l.setLocatienaam(r.getString("locatie_name"));
+
+                SoortOptie optie = new SoortOptie(d, st, l, r.getInt("current_count"), r.getInt("maxpers_number"));
+                optieComboBox.getItems().add(optie);
             }
         } catch (Exception se) {
-            System.out.println("Fout bij ophalen van locaties");
+            System.out.println("Fout bij ophalen van opties voor soort");
             se.printStackTrace();
         }
     }

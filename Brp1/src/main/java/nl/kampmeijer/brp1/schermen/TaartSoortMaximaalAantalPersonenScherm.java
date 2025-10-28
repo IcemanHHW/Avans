@@ -115,7 +115,7 @@ public class TaartSoortMaximaalAantalPersonenScherm {
             TaartSoortMaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+                System.out.println("Selecteer eerst een item om te verwijderen");
                 return;
             }
 
