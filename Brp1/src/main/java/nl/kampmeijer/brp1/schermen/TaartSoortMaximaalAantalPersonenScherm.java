@@ -5,9 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
-import nl.kampmeijer.brp1.models.Soort;
-import nl.kampmeijer.brp1.models.Variant;
-import nl.kampmeijer.brp1.models.TaartSoortVariant;
+import nl.kampmeijer.brp1.models.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -15,106 +13,106 @@ import java.util.ArrayList;
 
 import static nl.kampmeijer.brp1.database.DatabaseHelper.*;
 
-public class TaartSoortVariantScherm {
+public class TaartSoortMaximaalAantalPersonenScherm {
     private final Button addButton = new Button("Toevoegen"), updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen");
     private final ComboBox<Soort> soortBox = new ComboBox<>();
-    private final ComboBox<Variant> variantBox = new ComboBox<>();
-    private final ListView<TaartSoortVariant> listview = new ListView<>();
+    private final ComboBox<MaximaalAantalPersonen> mapBox = new ComboBox<>();
+    private final ListView<TaartSoortMaximaalAantalPersonen> listview = new ListView<>();
 
-    public TaartSoortVariantScherm(@NotNull GridPane root) {
+    public TaartSoortMaximaalAantalPersonenScherm(@NotNull GridPane root) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
 
         root.add(listview, 0, 0, 1, 4);
         root.add(soortBox, 1, 0);
-        root.add(variantBox, 2, 0);
+        root.add(mapBox, 2, 0);
         root.add(addButton, 1, 1);
         root.add(updateButton, 1, 2);
         root.add(deleteButton, 1, 3);
 
         ResultSet r;
-        ArrayList<TaartSoortVariant> allTSVs = new ArrayList<>();
+        ArrayList<TaartSoortMaximaalAantalPersonen> allTSMAPs = new ArrayList<>();
         try {
             r = getData("""
-        SELECT tsv.soort_id,
-               tsv.variant_id,
+        SELECT tsmap.soort_id,
+               tsmap.maxpers_id,
                s.soortnaam AS soort_name,
-               v.variantnaam AS variant_name
-        FROM taartsoortenvarianten tsv
+               map.maximumnummer AS maxpers_number
+        FROM taartsoortenmaximaalaantelpersonen tsmap
         JOIN soorten s ON (s.id = tsv.soort_id)
-        JOIN varianten v ON (v.id = tsv.variant_id)
+        JOIN maximaalaantelpersonen map ON (map.id = tsmap.maxpers_id)
     """);
             while (r.next()) {
-                TaartSoortVariant tsv = new TaartSoortVariant();
-                tsv.setSoort_id(r.getInt("soort_id"));
-                tsv.setVariant_id(r.getInt("variant_id"));
-                tsv.setSoort_name(r.getString("soort_name"));
-                tsv.setVariant_name(r.getString("variant_name"));
-                allTSVs.add(tsv);
+                TaartSoortMaximaalAantalPersonen tsmap = new TaartSoortMaximaalAantalPersonen();
+                tsmap.setSoort_id(r.getInt("soort_id"));
+                tsmap.setMaxpers_id(r.getInt("maxpers_id"));
+                tsmap.setSoort_name(r.getString("soort_name"));
+                tsmap.setMaxpers_number(r.getInt("maxpers_number"));
+                allTSMAPs.add(tsmap);
             }
         } catch (Exception se) {
-            System.out.println("Fout bij ophalen van taartsoortenvarianten");
+            System.out.println("Fout bij ophalen van taartsoortenmaximaalaantelpersonen");
             se.printStackTrace();
         }
 
-        for (TaartSoortVariant tsv : allTSVs) {
-            listview.getItems().add(tsv);
+        for (TaartSoortMaximaalAantalPersonen tsmap : allTSMAPs) {
+            listview.getItems().add(tsmap);
         }
 
         loadSoorts();
-        loadVariants();
+        loadMaxPers();
 
         addButton.setOnAction(_ -> {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
-            Variant variant = variantBox.getSelectionModel().getSelectedItem();
+            MaximaalAantalPersonen maximaalAantalPersonen = mapBox.getSelectionModel().getSelectedItem();
 
-            if (soort != null && variant != null) {
-                int iResult = insertData("INSERT INTO taartsoortenvarianten(soort_id, variant_id) " +
-                        "VALUES (" + soort.getId() + ", " + variant.getId() + ")");
+            if (soort != null && maximaalAantalPersonen != null) {
+                int iResult = insertData("INSERT INTO taartsoortenmaximaalaantelpersonen(soort_id, maxpers_id) " +
+                        "VALUES (" + soort.getId() + ", " + maximaalAantalPersonen.getId() + ")");
                 System.out.println(iResult + " rij toegevoegd");
                 if (iResult > 0) {
-                    TaartSoortVariant newTSV = new TaartSoortVariant();
-                    newTSV.setSoort_name(soort.getSoortnaam());
-                    newTSV.setVariant_name(variant.getVariantnaam());
-                    listview.getItems().add(newTSV);
+                    TaartSoortMaximaalAantalPersonen newTSMAP = new TaartSoortMaximaalAantalPersonen();
+                    newTSMAP.setSoort_name(soort.getSoortnaam());
+                    newTSMAP.setMaxpers_number(maximaalAantalPersonen.getMaximumnummer());
+                    listview.getItems().add(newTSMAP);
                     soortBox.getSelectionModel().clearSelection();
-                    variantBox.getSelectionModel().clearSelection();
+                    mapBox.getSelectionModel().clearSelection();
                 }
             }
         });
 
         updateButton.setOnAction(_ -> {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
-            Variant variant = variantBox.getSelectionModel().getSelectedItem();
-            TaartSoortVariant selectedItem = listview.getSelectionModel().getSelectedItem();
+            MaximaalAantalPersonen maximaalAantalPersonen = mapBox.getSelectionModel().getSelectedItem();
+            TaartSoortMaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
             if (selectedItem == null) {
                 System.out.println("Selecteer eerst een item om aan te passen.");
                 return;
             }
 
-            if (soort != null && variant != null) {
+            if (soort != null && maximaalAantalPersonen != null) {
                 int iResult = updateData(
-                        "UPDATE taartsoortenvarianten SET " +
+                        "UPDATE taartsoortenmaximaalaantelpersonen SET " +
                         "soort_id = " + soort.getId() + ", " +
-                        "variant_id = " + variant.getId() +
+                        "maxpers_id = " + maximaalAantalPersonen.getId() +
                         " WHERE soort_id = " + selectedItem.getSoort_id() +
-                        " AND variant_id = " + selectedItem.getVariant_id()
+                        " AND maxpers_id = " + selectedItem.getMaxpers_id()
                 );
                 System.out.println(iResult + " rij aangepast");
                 if (iResult > 0) {
                     selectedItem.setSoort_name(soort.getSoortnaam());
-                    selectedItem.setVariant_name(variant.getVariantnaam());
+                    selectedItem.setMaxpers_number(maximaalAantalPersonen.getMaximumnummer());
                     listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
-                    variantBox.getSelectionModel().clearSelection();
+                    mapBox.getSelectionModel().clearSelection();
                 }
             }
         });
 
         deleteButton.setOnAction(_ -> {
-            TaartSoortVariant selectedItem = listview.getSelectionModel().getSelectedItem();
+            TaartSoortMaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
             if (selectedItem == null) {
                 System.out.println("Selecteer eerst een item om aan te passen.");
@@ -122,9 +120,9 @@ public class TaartSoortVariantScherm {
             }
 
             int iResult = updateData(
-                    "DELETE FROM taartsoortenvarianten " +
+                    "DELETE FROM taartsoortenmaximaalaantelpersonen " +
                             "WHERE soort_id = " + selectedItem.getSoort_id() +
-                            " AND variant_id = " + selectedItem.getVariant_id()
+                            " AND maxpers_id = " + selectedItem.getMaxpers_id()
             );
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
@@ -149,18 +147,18 @@ public class TaartSoortVariantScherm {
         }
     }
 
-    private void loadVariants() {
+    private void loadMaxPers() {
         ResultSet r;
         try {
-            r = getData("select * from varianten");
+            r = getData("select * from maximaalaantelpersonen");
             while (r.next()) {
-                Variant v = new Variant();
-                v.setId(r.getInt("id"));
-                v.setVariantnaam(r.getString("variantnaam"));
-                variantBox.getItems().add(v);
+                MaximaalAantalPersonen map = new MaximaalAantalPersonen();
+                map.setId(r.getInt("id"));
+                map.setMaximumnummer(r.getInt("maximumnummer"));
+                mapBox.getItems().add(map);
             }
         } catch (Exception se) {
-            System.out.println("Fout bij ophalen van varianten");
+            System.out.println("Fout bij ophalen van maximaalaantelpersonen");
             se.printStackTrace();
         }
     }

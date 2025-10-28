@@ -42,15 +42,15 @@ public class MaximaalAantalPersonenScherm {
         ResultSet r;
         ArrayList<MaximaalAantalPersonen> allMAPS = new ArrayList<>();
         try {
-            r = getData("select * from maximaalaantalpersonen");
+            r = getData("select * from maximaalaantelpersonen");
             while (r.next()) {
                 MaximaalAantalPersonen m = new MaximaalAantalPersonen();
                 m.setId(r.getInt("id"));
-                m.setMaximimumnummer(r.getInt("maximumnummer"));
+                m.setMaximumnummer(r.getInt("maximumnummer"));
                 allMAPS.add(m);
             }
         } catch (Exception se) {
-            System.out.println("Fout bij ophalen van maximaalaantalpersonen");
+            System.out.println("Fout bij ophalen van maximaalaantelpersonen");
             se.printStackTrace();
         }
 
@@ -64,12 +64,12 @@ public class MaximaalAantalPersonenScherm {
             if (!input.isEmpty()) {
                 try {
                     int number = Integer.parseInt(input); // Ensure it's an integer
-                    int iResult = insertData("INSERT INTO maximaalaantalpersonen(maximumnummer) VALUES (" + number + ")");
+                    int iResult = insertData("INSERT INTO maximaalaantelpersonen(maximumnummer) VALUES (" + number + ")");
                     System.out.println(iResult + " rij toegevoegd");
 
                     if (iResult > 0) {
                         MaximaalAantalPersonen newMAP = new MaximaalAantalPersonen();
-                        newMAP.setMaximimumnummer(number);
+                        newMAP.setMaximumnummer(number);
                         listview.getItems().add(newMAP);
                         numberField.clear();
                     }
@@ -91,11 +91,11 @@ public class MaximaalAantalPersonenScherm {
             if (!input.isEmpty()) {
                 try {
                     int number = Integer.parseInt(input); // Ensure it's an integer
-                    int iResult = updateData("UPDATE maximaalaantalpersonen SET maximumnummer = " + number + " WHERE id = " + selectedItem.getId());
+                    int iResult = updateData("UPDATE maximaalaantelpersonen SET maximumnummer = " + number + " WHERE id = " + selectedItem.getId());
                     System.out.println(iResult + " rij aangepast");
 
                     if (iResult > 0) {
-                        selectedItem.setMaximimumnummer(number);
+                        selectedItem.setMaximumnummer(number);
                         listview.refresh();
                         numberField.clear();
                     }
@@ -113,7 +113,7 @@ public class MaximaalAantalPersonenScherm {
                 return;
             }
 
-            int iResult = updateData("DELETE FROM maximaalaantalpersonen WHERE id = " + selectedItem.getId());
+            int iResult = updateData("DELETE FROM maximaalaantelpersonen WHERE id = " + selectedItem.getId());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
                 listview.getItems().remove(selectedItem);

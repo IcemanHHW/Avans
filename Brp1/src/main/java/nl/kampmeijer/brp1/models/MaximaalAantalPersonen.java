@@ -2,7 +2,7 @@ package nl.kampmeijer.brp1.models;
 
 public class MaximaalAantalPersonen {
     private int id;
-    private int maximimumnummer;
+    private int maximumnummer;
 
     public MaximaalAantalPersonen() {
 
@@ -16,16 +16,16 @@ public class MaximaalAantalPersonen {
         this.id = id;
     }
 
-    public int getMaximimumnummer() {
-        return maximimumnummer;
+    public int getMaximumnummer() {
+        return maximumnummer;
     }
 
-    public void setMaximimumnummer(int maximimumnummer) {
-        this.maximimumnummer = maximimumnummer;
+    public void setMaximumnummer(int maximumnummer) {
+        this.maximumnummer = maximumnummer;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(maximimumnummer);
+        return String.valueOf(maximumnummer);
     }
 }
