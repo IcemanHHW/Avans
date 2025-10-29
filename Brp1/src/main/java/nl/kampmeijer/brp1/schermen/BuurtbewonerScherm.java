@@ -32,7 +32,7 @@ public class BuurtbewonerScherm {
         ResultSet r;
         ArrayList<Buurtbewoner> allBuurtbewoners = new ArrayList<>();
         try {
-            r = getData("select * from datums");
+            r = getData("select * from buurtbewoners");
             while (r.next()) {
                 Buurtbewoner b = new Buurtbewoner();
                 b.setId(r.getInt("id"));

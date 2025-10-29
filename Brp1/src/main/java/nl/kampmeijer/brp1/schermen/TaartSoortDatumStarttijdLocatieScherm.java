@@ -46,7 +46,7 @@ public class TaartSoortDatumStarttijdLocatieScherm {
                s.soortnaam AS soort_name,
                d.datum AS datum_date,
                st.starttijd AS starttijd_date,
-               l.locatienaam AS locatie_name,
+               l.locatienaam AS locatie_name
         FROM taartsoortendatumsstarttijdenlocaties tsdsl
         JOIN soorten s ON (s.id = tsdsl.soort_id)
         JOIN datums d ON (d.id = tsdsl.datum_id)

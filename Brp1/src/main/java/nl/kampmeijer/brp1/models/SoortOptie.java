@@ -13,6 +13,15 @@ public class SoortOptie {
     private final int currentCount;
     private final int maxCount;
 
+    /**
+     * Constructs a new SoortOptie with the given properties.
+     *
+     * @param datum        The datum of the option.
+     * @param starttijd    The starttijd of the option.
+     * @param locatie      The locatie of the option.
+     * @param currentCount The number of current registrations for this option.
+     * @param maxCount     The maximum number of allowed participants for this option.
+     */
     public SoortOptie(Datum datum, Starttijd starttijd, Locatie locatie, int currentCount, int maxCount) {
         this.datum = datum;
         this.starttijd = starttijd;

@@ -1,72 +1,94 @@
 package nl.kampmeijer.brp1.schermen;
 
+import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp1.models.*;
-import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
+
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import static nl.kampmeijer.brp1.database.DatabaseHelper.*;
 
-public class InschrijvingBuurtbewonerScherm {
-    private final Button addButton = new Button("Inschrijven");
+public class AdminInschrijvingBuurtbewonerScherm  {
+    private final Button updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen");
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<Variant> variantBox = new ComboBox<>();
     private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
+    private final ListView<InschrijvingBuurtbewoner> listview = new ListView<>();
 
-    public InschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onTerug) {
-        root.setPadding(new Insets(20));
+    public AdminInschrijvingBuurtbewonerScherm(@NotNull GridPane root) {
+        root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
-        root.setAlignment(Pos.CENTER);
 
-        Label soortLabel = new Label("Soort:");
-        Label variantLabel = new Label("Variant:");
-        Label optieLabel = new Label("Datum/Tijd/Locatie:");
-        Label buurtbewonerLabel = new Label("Buurtbewoner:");
-        soortLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        variantLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        optieLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        buurtbewonerLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        root.add(listview, 0, 0, 1, 4);
+        root.add(soortBox, 1, 0);
+        root.add(variantBox, 2, 0);
+        root.add(optieComboBox, 3, 0);
+        root.add(buurtbewonerComboBox, 4, 0);
+        root.add(updateButton, 1, 1);
+        root.add(deleteButton, 1, 2);
 
+        ResultSet r;
+        ArrayList<InschrijvingBuurtbewoner> allIBs = new ArrayList<>();
+        try {
+            r = getData("""
+        SELECT ib.buurtbewoner_id,
+               ib.soort_id,
+               ib.variant_id,
+               ib.datum_id,
+               ib.starttijd_id,
+               ib.locatie_id,
+               b.buurtbewonernaam AS buurtbewoner_name,
+               s.soortnaam AS soort_name,
+               v.variantnaam AS variant_name,
+               d.datum AS datum_date,
+               st.starttijd AS starttijd_date,
+               l.locatienaam AS locatie_name
+        FROM inschrijvingenbuurtbewoners ib
+        JOIN buurtbewoners b ON (b.id = ib.buurtbewoner_id)
+        JOIN soorten s ON (s.id = ib.soort_id)
+        JOIN variant v ON (v.id = ib.variant_id)
+        JOIN datums d ON (d.id = ib.datum_id)
+        JOIN starttijden st ON (st.id = ib.starttijd_id)
+        JOIN locaties l ON (l.id = ib.locatie_id)
+    """);
+            while (r.next()) {
+                InschrijvingBuurtbewoner IB = new InschrijvingBuurtbewoner();
+                IB.setBuurtbewoner_id(r.getInt("buurtbewoner_id"));
+                IB.setSoort_id(r.getInt("soort_id"));
+                IB.setVariant_id(r.getInt("variant_id"));
+                IB.setDatum_id(r.getInt("datum_id"));
+                IB.setStarttijd_id(r.getInt("starttijd_id"));
+                IB.setLocatie_id(r.getInt("locatie_id"));
+                IB.setBuurtbewoner_name(r.getString("buurtbewoner_name"));
+                IB.setSoort_name(r.getString("soort_name"));
+                IB.setVariant_name(r.getString("variant_name"));
+                IB.setDatum_date(r.getString("datum_date"));
+                IB.setStarttijd_time(r.getString("starttijd_time"));
+                IB.setLocatie_name(r.getString("locatie_name"));
+                allIBs.add(IB);
+            }
+        } catch (Exception se) {
+            System.out.println("Fout bij ophalen van inschrijvingenbuurtbewoners");
+            se.printStackTrace();
+        }
 
-        // Form layout
-        VBox formBox = new VBox(10);
-        formBox.setAlignment(Pos.CENTER);
-        formBox.getChildren().addAll(
-                soortLabel, soortBox,
-                variantLabel, variantBox,
-                optieLabel, optieComboBox,
-                buurtbewonerLabel, buurtbewonerComboBox,
-                addButton
-        );
-
-        // Back button
-        Button backButton = new Button("Terug");
-        backButton.setPrefSize(100, 20);
-        backButton.setStyle("-fx-font-size: 14px;");
-        backButton.setOnAction(_ -> onTerug.run());
-
-        addButton.setPrefSize(120, 30);
-        addButton.setStyle("-fx-font-size: 16px;");
-
-        root.add(formBox, 1, 1);
-        root.add(backButton, 0, 0);
-
+        for (InschrijvingBuurtbewoner IB : allIBs) {
+            listview.getItems().add(IB);
+        }
 
         loadBuurtbewoners();
         loadSoorts();
         loadVariants();
 
-        // When a Soort is selected, load its valid options
+        // When a soort is selected, load its valid options
         soortBox.setOnAction(_ -> {
             Soort selectedSoort = soortBox.getSelectionModel().getSelectedItem();
             if (selectedSoort != null) {
@@ -76,23 +98,74 @@ public class InschrijvingBuurtbewonerScherm {
             }
         });
 
-        addButton.setOnAction(_ -> {
+        updateButton.setOnAction(_ -> {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
             Variant variant = variantBox.getSelectionModel().getSelectedItem();
             SoortOptie optie = optieComboBox.getSelectionModel().getSelectedItem();
             Buurtbewoner buurtbewoner = buurtbewonerComboBox.getSelectionModel().getSelectedItem();
+            InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
+
+            if (selectedItem == null) {
+                System.out.println("Selecteer eerst een item om aan te passen.");
+                return;
+            }
 
             if (soort != null && variant != null && optie != null && buurtbewoner != null) {
-                int iResult = insertData("INSERT INTO inschrijvingenbuurtbewoners (buurtbewoner_id, soort_id, variant_id, datum_id, starttijd_id, locatie_id) " +
-                                "VALUES (" + buurtbewoner.getId() + ", " + soort.getId() + ", " + variant.getId() + ", " + optie.getDatum().getId() + ", " + optie.getStarttijd().getId() + ", " + optie.getLocatie().getId() + ")");
-                System.out.println(iResult + " rij toegevoegd");
+                int iResult = updateData(
+                        "UPDATE inschrijvingenbuurtbewoners SET " +
+                                "buurtbewoner_id = " + buurtbewoner.getId() + ", " +
+                                "soort_id = " + soort.getId() + ", " +
+                                "variant_id = " + variant.getId() + ", " +
+                                "datum_id = " + optie.getDatum().getId() + ", " +
+                                "starttijd_id = " + optie.getStarttijd().getId() + ", " +
+                                "locatie_id = " + optie.getLocatie().getId() +
+                                " WHERE buurtbewoner_id = " + selectedItem.getBuurtbewoner_id() +
+                                " AND soort_id = " + selectedItem.getSoort_id() +
+                                " AND variant_id = " + selectedItem.getVariant_id() +
+                                " AND datum_id = " + selectedItem.getDatum_id() +
+                                " AND starttijd_id = " + selectedItem.getStarttijd_id() +
+                                " AND locatie_id = " + selectedItem.getLocatie_id()
+                );
+                System.out.println(iResult + " rij aangepast");
 
                 if (iResult > 0) {
+                    selectedItem.setSoort_name(soort.getSoortnaam());
+                    selectedItem.setVariant_name(variant.getVariantnaam());
+                    selectedItem.setDatum_date(optie.getDatum().getDatum());
+                    selectedItem.setStarttijd_time(optie.getStarttijd().getStarttijd());
+                    selectedItem.setLocatie_name(optie.getLocatie().getLocatienaam());
+                    selectedItem.setBuurtbewoner_name(buurtbewoner.getBuurtbewonernaam());
+                    listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
                     variantBox.getSelectionModel().clearSelection();
                     optieComboBox.getSelectionModel().clearSelection();
                     buurtbewonerComboBox.getSelectionModel().clearSelection();
                 }
+            }
+        });
+
+        deleteButton.setOnAction(_ -> {
+            InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
+
+            if (selectedItem == null) {
+                System.out.println("Selecteer eerst een item om te verwijderen.");
+                return;
+            }
+
+            int iResult = updateData(
+                    "DELETE FROM inschrijvingenbuurtbewoners " +
+                            "WHERE buurtbewoner_id = " + selectedItem.getBuurtbewoner_id() +
+                            " AND soort_id = " + selectedItem.getSoort_id() +
+                            " AND variant_id = " + selectedItem.getVariant_id() +
+                            " AND datum_id = " + selectedItem.getDatum_id() +
+                            " AND starttijd_id = " + selectedItem.getStarttijd_id() +
+                            " AND locatie_id = " + selectedItem.getLocatie_id()
+            );
+            System.out.println(iResult + " rij verwijderd");
+
+            if (iResult > 0) {
+                listview.getItems().remove(selectedItem);
+                listview.refresh();
             }
         });
     }
