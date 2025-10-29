@@ -4,8 +4,11 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp1.models.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,25 +18,40 @@ import java.util.ArrayList;
 import static nl.kampmeijer.brp1.database.DatabaseHelper.*;
 
 public class AdminInschrijvingBuurtbewonerScherm  {
-    private final Button updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen");
+    private final Button updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen"), backButton = new Button("Terug");
+    private final Label soortLabel = new Label("Soort:"), variantLabel = new Label("Variant:"), optieLabel = new Label("Beschikbare momenten:"), buurtbewonerLabel = new Label("Buurtbewoner:");
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<Variant> variantBox = new ComboBox<>();
     private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
     private final ListView<InschrijvingBuurtbewoner> listview = new ListView<>();
 
-    public AdminInschrijvingBuurtbewonerScherm(@NotNull GridPane root) {
+    public AdminInschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
 
-        root.add(listview, 0, 0, 1, 4);
-        root.add(soortBox, 1, 0);
-        root.add(variantBox, 2, 0);
-        root.add(optieComboBox, 3, 0);
-        root.add(buurtbewonerComboBox, 4, 0);
-        root.add(updateButton, 1, 1);
-        root.add(deleteButton, 1, 2);
+        root.add(backButton, 0, 0);
+        root.add(listview, 0, 1, 1, 5);
+        root.add(buurtbewonerLabel, 1, 1);
+        root.add(soortLabel, 2, 1);
+        root.add(variantLabel, 3, 1);
+        root.add(optieLabel, 4, 1);
+        root.add(buurtbewonerComboBox, 1, 2);
+        root.add(soortBox, 2, 2);
+        root.add(variantBox, 3, 2);
+        root.add(optieComboBox, 4, 2);
+        root.add(updateButton, 1, 3);
+        root.add(deleteButton, 1, 4);
+
+        backButton.setPrefSize(100, 20);
+        backButton.setStyle("-fx-font-size: 14px;");
+        backButton.setOnAction(_ -> onBack.run());
+
+        soortLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        variantLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        optieLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        buurtbewonerLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
         ResultSet r;
         ArrayList<InschrijvingBuurtbewoner> allIBs = new ArrayList<>();
@@ -88,7 +106,7 @@ public class AdminInschrijvingBuurtbewonerScherm  {
         loadSoorts();
         loadVariants();
 
-        // When a soort is selected, load its valid options
+        // When a Soort is selected, load its valid options
         soortBox.setOnAction(_ -> {
             Soort selectedSoort = soortBox.getSelectionModel().getSelectedItem();
             if (selectedSoort != null) {

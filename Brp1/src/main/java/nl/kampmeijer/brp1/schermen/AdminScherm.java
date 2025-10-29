@@ -15,12 +15,12 @@ public class AdminScherm {
     private final Button datumButton = new Button("Datums");
     private final Button starttijdButton = new Button("Starttijden");
     private final Button locatieButton = new Button("Locaties");
-    private final Button maxPersonenButton = new Button("Max. Aantal Personen");
-    private final Button soortVariantButton = new Button("Soort-Variant Koppeling");
-    private final Button soortMaxPersonenButton = new Button("Soort-Max Personen Koppeling");
-    private final Button soortDatumStarttijdLocatieButton = new Button("Soort-Datum-Starttijd-Locatie");
-    private final Button inschrijvingenButton = new Button("Alle Inschrijvingen");
-    private final Button terugButton = new Button("Terug naar Start");
+    private final Button maxPersonenButton = new Button("Maximaal aantal personen");
+    private final Button soortVariantButton = new Button("TaartSoortVariant");
+    private final Button soortMaxPersonenButton = new Button("TaartSoortMaximaalAantalPersonen");
+    private final Button soortDatumStarttijdLocatieButton = new Button("TaartSoortDatumStarttijdLocatie");
+    private final Button inschrijvingenButton = new Button("Inschrijvingen Buurtbewoners");
+    private final Button backButton = new Button("Terug");
 
     public AdminScherm(@NotNull GridPane root,
                        Runnable onBuurtbewoner,
@@ -34,7 +34,7 @@ public class AdminScherm {
                        Runnable onSoortMaxPersonen,
                        Runnable onSoortDatumStarttijdLocatie,
                        Runnable onInschrijvingen,
-                       Runnable onTerug) {
+                       Runnable onBack) {
 
         root.setPadding(new Insets(20));
         root.setHgap(10);
@@ -49,9 +49,6 @@ public class AdminScherm {
         Label koppelLabel = new Label("Koppelingen:");
         koppelLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-        Label overzichtLabel = new Label("Overzichten:");
-        overzichtLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-
         // Set button sizes
         buurtbewonerButton.setPrefWidth(250);
         soortButton.setPrefWidth(250);
@@ -64,7 +61,7 @@ public class AdminScherm {
         soortMaxPersonenButton.setPrefWidth(250);
         soortDatumStarttijdLocatieButton.setPrefWidth(250);
         inschrijvingenButton.setPrefWidth(250);
-        terugButton.setPrefWidth(250);
+        backButton.setPrefWidth(250);
 
         // Add event handlers
         buurtbewonerButton.setOnAction(_ -> onBuurtbewoner.run());
@@ -78,10 +75,14 @@ public class AdminScherm {
         soortMaxPersonenButton.setOnAction(_ -> onSoortMaxPersonen.run());
         soortDatumStarttijdLocatieButton.setOnAction(_ -> onSoortDatumStarttijdLocatie.run());
         inschrijvingenButton.setOnAction(_ -> onInschrijvingen.run());
-        terugButton.setOnAction(_ -> onTerug.run());
+        backButton.setOnAction(_ -> onBack.run());
 
         // Layout
         int row = 0;
+
+        root.add(backButton, 0, row++);
+        row++; // Empty row
+
         root.add(titleLabel, 0, row++, 2, 1);
 
         row++; // Empty row
@@ -99,12 +100,6 @@ public class AdminScherm {
         root.add(soortVariantButton, 0, row++);
         root.add(soortMaxPersonenButton, 0, row++);
         root.add(soortDatumStarttijdLocatieButton, 0, row++);
-
-        row++; // Empty row
-        root.add(overzichtLabel, 0, row++, 2, 1);
         root.add(inschrijvingenButton, 0, row++);
-
-        row++; // Empty row
-        root.add(terugButton, 0, row++);
     }
 }

@@ -14,14 +14,12 @@ public class Main extends Application {
     @Override
     public void start(@NotNull Stage stage) {
         this.primaryStage = stage;
-
         GridPane root = new GridPane();
-        scene = new Scene(root, 900, 600);
-
+        scene = new Scene(root, 900, 900);
         stage.setScene(scene);
         stage.setTitle("Taarten bakken in Lottum");
-
         showStartScherm();
+        stage.setMaximized(true);
         stage.show();
     }
 
@@ -52,88 +50,88 @@ public class Main extends Application {
                 this::showSoortVariantScherm,
                 this::showSoortMaxPersonenScherm,
                 this::showSoortDatumStarttijdLocatieScherm,
-                this::showInschrijvingenScherm,
+                this::showAdminInschrijvingBuurtbewonerScherm,
                 this::showStartScherm
         );
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Admin");
     }
 
+    private void showAdminInschrijvingBuurtbewonerScherm() {
+        GridPane root = new GridPane();
+        new AdminInschrijvingBuurtbewonerScherm(root, this::showAdminScherm);
+        scene.setRoot(root);
+        primaryStage.setTitle("Taarten bakken in Lottum - Inschrijvingen");
+    }
+
     private void showBuurtbewonerScherm() {
         GridPane root = new GridPane();
-        new BuurtbewonerScherm(root);
+        new BuurtbewonerScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Buurtbewoners");
     }
 
     private void showSoortScherm() {
         GridPane root = new GridPane();
-        new SoortScherm(root);
+        new SoortScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Soorten");
     }
 
     private void showVariantScherm() {
         GridPane root = new GridPane();
-        new VariantScherm(root);
+        new VariantScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Varianten");
     }
 
     private void showDatumScherm() {
         GridPane root = new GridPane();
-        new DatumScherm(root);
+        new DatumScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Datums");
     }
 
     private void showStarttijdScherm() {
         GridPane root = new GridPane();
-        new StarttijdScherm(root);
+        new StarttijdScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Starttijden");
     }
 
     private void showLocatieScherm() {
         GridPane root = new GridPane();
-        new LocatieScherm(root);
+        new LocatieScherm(root, this::showAdminScherm);
         scene.setRoot(root);
         primaryStage.setTitle("Taarten bakken in Lottum - Locaties");
     }
 
     private void showMaxPersonenScherm() {
         GridPane root = new GridPane();
-        new MaximaalAantalPersonenScherm(root);
+        new MaximaalAantalPersonenScherm(root, this::showAdminScherm);
         scene.setRoot(root);
-        primaryStage.setTitle("Taarten bakken in Lottum - Max Personen");
+        primaryStage.setTitle("Taarten bakken in Lottum - Maximaal Aantal Personen");
     }
 
     private void showSoortVariantScherm() {
         GridPane root = new GridPane();
-        new TaartSoortVariantScherm(root);
+        new TaartSoortVariantScherm(root, this::showAdminScherm);
         scene.setRoot(root);
-        primaryStage.setTitle("Taarten bakken in Lottum - Soort-Variant");
+        primaryStage.setTitle("Taarten bakken in Lottum - TaartSoortVariant");
     }
 
     private void showSoortMaxPersonenScherm() {
         GridPane root = new GridPane();
-        new TaartSoortMaximaalAantalPersonenScherm(root);
+        new TaartSoortMaximaalAantalPersonenScherm(root, this::showAdminScherm);
         scene.setRoot(root);
-        primaryStage.setTitle("Taarten bakken in Lottum - Soort-Max Personen");
+        primaryStage.setTitle("Taarten bakken in Lottum - TaartSoortMaximaalAantalPersonen");
     }
 
     private void showSoortDatumStarttijdLocatieScherm() {
         GridPane root = new GridPane();
-        new TaartSoortDatumStarttijdLocatieScherm(root);
+        new TaartSoortDatumStarttijdLocatieScherm(root, this::showAdminScherm);
         scene.setRoot(root);
-        primaryStage.setTitle("Taarten bakken in Lottum - Soort-Datum-Starttijd-Locatie");
-    }
-
-    private void showInschrijvingenScherm() {
-        GridPane root = new GridPane();
-        new AdminInschrijvingBuurtbewonerScherm(root);
-        scene.setRoot(root);
-        primaryStage.setTitle("Taarten bakken in Lottum - Alle Inschrijvingen");
+        primaryStage.setTitle("Taarten bakken in Lottum - TaartSoortDatumStarttijdLocatie");
     }
 
     public static void main(String[] args) {

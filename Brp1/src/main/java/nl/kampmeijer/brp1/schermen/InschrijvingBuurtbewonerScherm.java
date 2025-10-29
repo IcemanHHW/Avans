@@ -16,30 +16,26 @@ import java.sql.ResultSet;
 import static nl.kampmeijer.brp1.database.DatabaseHelper.*;
 
 public class InschrijvingBuurtbewonerScherm {
-    private final Button addButton = new Button("Inschrijven");
+    private final Button addButton = new Button("Inschrijven"), backButton = new Button("Terug");
+    private final Label soortLabel = new Label("Soort:"), variantLabel = new Label("Variant:"), optieLabel = new Label("Beschikbare momenten:"), buurtbewonerLabel = new Label("Buurtbewoner:");
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<Variant> variantBox = new ComboBox<>();
     private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
+    private final VBox formBox = new VBox();
 
-    public InschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onTerug) {
+    public InschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(20));
         root.setHgap(10);
         root.setVgap(10);
         root.setAlignment(Pos.CENTER);
 
-        Label soortLabel = new Label("Soort:");
-        Label variantLabel = new Label("Variant:");
-        Label optieLabel = new Label("Datum/Tijd/Locatie:");
-        Label buurtbewonerLabel = new Label("Buurtbewoner:");
         soortLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         variantLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         optieLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         buurtbewonerLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
 
-
         // Form layout
-        VBox formBox = new VBox(10);
         formBox.setAlignment(Pos.CENTER);
         formBox.getChildren().addAll(
                 soortLabel, soortBox,
@@ -49,11 +45,10 @@ public class InschrijvingBuurtbewonerScherm {
                 addButton
         );
 
-        // Back button
-        Button backButton = new Button("Terug");
+        // Button style
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
-        backButton.setOnAction(_ -> onTerug.run());
+        backButton.setOnAction(_ -> onBack.run());
 
         addButton.setPrefSize(120, 30);
         addButton.setStyle("-fx-font-size: 16px;");

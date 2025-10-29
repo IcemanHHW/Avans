@@ -14,7 +14,7 @@ public class StartScherm {
     private final Button inschrijvenButton = new Button("Inschrijven");
     private final Button adminButton = new Button("Admin");
 
-    public StartScherm(@NotNull GridPane root, Runnable onInschrijven, Runnable onAdmin) {
+    public StartScherm(@NotNull GridPane root, Runnable onSignUp, Runnable onAdmin) {
         root.setPadding(new Insets(40));
         root.setAlignment(Pos.CENTER);
 
@@ -33,7 +33,7 @@ public class StartScherm {
         adminButton.setPrefSize(200, 50);
         adminButton.setStyle("-fx-font-size: 16px;");
 
-        inschrijvenButton.setOnAction(_ -> onInschrijven.run());
+        inschrijvenButton.setOnAction(_ -> onSignUp.run());
         adminButton.setOnAction(_ -> onAdmin.run());
 
         content.getChildren().addAll(welcomeLabel, descriptionLabel, inschrijvenButton, adminButton);

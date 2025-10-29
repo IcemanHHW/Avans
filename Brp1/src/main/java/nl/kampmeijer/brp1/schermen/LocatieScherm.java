@@ -2,9 +2,12 @@ package nl.kampmeijer.brp1.schermen;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp1.models.Locatie;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,20 +17,29 @@ import java.util.ArrayList;
 import static nl.kampmeijer.brp1.database.DatabaseHelper.*;
 
 public class LocatieScherm {
-    private final Button addButton = new Button("Toevoegen"), updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen");
+    private final Button addButton = new Button("Toevoegen"), updateButton = new Button("Aanpassen"), deleteButton = new Button("Verwijderen"), backButton = new Button("Terug");
+    private final Label locatieLabel = new Label("Locatie:");
     private final TextField textField = new TextField();
     private final ListView<Locatie> listview = new ListView<>();
 
-    public LocatieScherm(@NotNull GridPane root) {
+    public LocatieScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
 
-        root.add(listview, 0, 0, 1, 4);
-        root.add(textField, 1, 0);
-        root.add(addButton, 1, 1);
-        root.add(updateButton, 1, 2);
-        root.add(deleteButton, 1, 3);
+        root.add(backButton, 0, 0);
+        root.add(listview, 0, 1, 1, 5);
+        root.add(locatieLabel, 1, 1);
+        root.add(textField, 1, 2);
+        root.add(addButton, 1, 3);
+        root.add(updateButton, 1, 4);
+        root.add(deleteButton, 1, 5);
+
+        backButton.setPrefSize(100, 20);
+        backButton.setStyle("-fx-font-size: 14px;");
+        backButton.setOnAction(_ -> onBack.run());
+
+        locatieLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
         ResultSet r;
         ArrayList<Locatie> allLocaties = new ArrayList<>();
