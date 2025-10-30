@@ -58,7 +58,7 @@ public class TaartSoortMaximaalAantalPersonenScherm {
                s.soortnaam AS soort_name,
                map.maximumnummer AS maxpers_number
         FROM taartsoortenmaximaalaantelpersonen tsmap
-        JOIN soorten s ON (s.id = tsv.soort_id)
+        JOIN soorten s ON (s.id = tsmap.soort_id)
         JOIN maximaalaantelpersonen map ON (map.id = tsmap.maxpers_id)
     """);
             while (r.next()) {
@@ -92,6 +92,7 @@ public class TaartSoortMaximaalAantalPersonenScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
@@ -135,6 +136,7 @@ public class TaartSoortMaximaalAantalPersonenScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
@@ -172,6 +174,13 @@ public class TaartSoortMaximaalAantalPersonenScherm {
 
             if (selectedItem == null) {
                 errorMsg.append("Selecteer eerst een item om te verwijderen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 return;
             }
 

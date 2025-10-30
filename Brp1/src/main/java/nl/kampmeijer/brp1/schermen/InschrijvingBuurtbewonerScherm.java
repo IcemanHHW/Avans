@@ -91,6 +91,7 @@ public class InschrijvingBuurtbewonerScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
@@ -166,7 +167,7 @@ public class InschrijvingBuurtbewonerScherm {
      * that have not yet reached their maximum number of participants.
      * Fills the {@code optieComboBox} with these available options.
      * <p>
-     * This method queries the <strong>taartsoortdatumstarttijdlocatie</strong> table and joins it with the
+     * This method queries the <strong>taartsoortendatumsstarttijdenlocaties</strong> table and joins it with the
      * <strong>inschrijvingenbuurtbewoners</strong> and <strong>taartsoortmaxaantalpersonen</strong> tables to count current registrations
      * and ensure only available slots are displayed.
      *
@@ -185,8 +186,8 @@ public class InschrijvingBuurtbewonerScherm {
                        st.starttijd AS starttijd_time,
                        l.locatienaam AS locatie_name,
                        COUNT(ib.buurtbewoner_id) AS current_count,
-                       tsmap.maxpers_number
-                FROM taartsoortdatumstarttijdlocatie tsdl
+                       map.maximumnummer AS maxpers_number
+                FROM taartsoortendatumsstarttijdenlocaties tsdl
                 JOIN soorten s ON s.id = tsdl.soort_id
                 JOIN datums d ON d.id = tsdl.datum_id
                 JOIN starttijden st ON st.id = tsdl.starttijd_id
@@ -196,9 +197,11 @@ public class InschrijvingBuurtbewonerScherm {
                     AND ib.datum_id = tsdl.datum_id
                     AND ib.starttijd_id = tsdl.starttijd_id
                     AND ib.locatie_id = tsdl.locatie_id
-                JOIN taartsoortmaxaantalpersonen tsmap
-                ON tsmap.soort_id = tsdl.soort_id
-                WHERE tsdl.soort_id =\s""" + soortId + """
+                JOIN taartsoortenmaximaalaantelpersonen tsmap
+                    ON tsmap.soort_id = tsdl.soort_id
+                JOIN maximaalaantelpersonen map
+                    ON map.id = tsmap.maxpers_id
+                WHERE tsdl.soort_id = """ + soortId + """
                 GROUP BY tsdl.soort_id,
                          tsdl.datum_id,
                          tsdl.starttijd_id,
@@ -207,8 +210,8 @@ public class InschrijvingBuurtbewonerScherm {
                          d.datum,
                          st.starttijd,
                          l.locatienaam,
-                         tsmap.maxpers_number
-                HAVING COUNT(ib.buurtbewoner_id) < tsmap.maxpers_number
+                         map.maximumnummer
+                HAVING COUNT(ib.buurtbewoner_id) < map.maximumnummer
             """);
 
             while (r.next()) {

@@ -82,6 +82,7 @@ public class StarttijdScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
@@ -122,6 +123,7 @@ public class StarttijdScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
@@ -160,6 +162,7 @@ public class StarttijdScherm {
 
             if (!errorMsg.isEmpty()) {
                 validationLabel.setText(errorMsg.toString());
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
                 validationLabel.setVisible(true);
                 return;
             }
