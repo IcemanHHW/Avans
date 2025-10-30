@@ -30,26 +30,56 @@ public class SoortOptie {
         this.maxCount = maxCount;
     }
 
+    /**
+     * Returns the date (Datum) associated with this option.
+     *
+     * @return The {@link Datum} of this SoortOptie.
+     */
     public Datum getDatum() {
         return datum;
     }
 
+    /**
+     * Returns the Starttijd associated with this option.
+     *
+     * @return The {@link Starttijd} of this SoortOptie.
+     */
     public Starttijd getStarttijd() {
         return starttijd;
-
     }
+
+    /**
+     * Returns the Locatie associated with this option.
+     *
+     * @return The {@link Locatie} of this SoortOptie.
+     */
     public Locatie getLocatie() {
         return locatie;
     }
 
+    /**
+     * Returns the current number of registrations for this option.
+     *
+     * @return The number of currently registered participants.
+     */
     public int getCurrentCount() {
         return currentCount;
     }
 
+    /**
+     * Returns the maximum allowed number of participants for this option.
+     *
+     * @return The maximum number of participants that can register.
+     */
     public int getMaxCount() {
         return maxCount;
     }
 
+    /**
+     * Returns a string representation of this SoortOptie, including the datum, starttijd and locatie.
+     *
+     * @return A formatted string representing this SoortOptie.
+     */
     @Override
     public String toString() {
         return datum + " " + starttijd + " " + locatie;
