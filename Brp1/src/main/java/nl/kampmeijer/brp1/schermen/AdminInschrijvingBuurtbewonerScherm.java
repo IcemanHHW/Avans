@@ -1,6 +1,5 @@
 package nl.kampmeijer.brp1.schermen;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,6 +24,7 @@ public class AdminInschrijvingBuurtbewonerScherm  {
     private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
     private final ListView<InschrijvingBuurtbewoner> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public AdminInschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -43,6 +43,7 @@ public class AdminInschrijvingBuurtbewonerScherm  {
         root.add(optieComboBox, 4, 2);
         root.add(updateButton, 1, 3);
         root.add(deleteButton, 1, 4);
+        root.add(validationLabel, 2, 3);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
@@ -52,6 +53,8 @@ public class AdminInschrijvingBuurtbewonerScherm  {
         variantLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         optieLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         buurtbewonerLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         ResultSet r;
         ArrayList<InschrijvingBuurtbewoner> allIBs = new ArrayList<>();
@@ -123,8 +126,20 @@ public class AdminInschrijvingBuurtbewonerScherm  {
             Buurtbewoner buurtbewoner = buurtbewonerComboBox.getSelectionModel().getSelectedItem();
             InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (variant == null) errorMsg.append("Selecteer een variant\n");
+            if (optie == null) errorMsg.append("Selecteer een optie\n");
+            if (buurtbewoner == null) errorMsg.append("Selecteer een buurtbewoner\n");
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+                errorMsg.append("Selecteer eerst een item om aan te passen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -158,6 +173,13 @@ public class AdminInschrijvingBuurtbewonerScherm  {
                     variantBox.getSelectionModel().clearSelection();
                     optieComboBox.getSelectionModel().clearSelection();
                     buurtbewonerComboBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Combinatie is aangepast");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het aanpassen");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -165,8 +187,16 @@ public class AdminInschrijvingBuurtbewonerScherm  {
         deleteButton.setOnAction(_ -> {
             InschrijvingBuurtbewoner selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen.");
+                errorMsg.append("Selecteer eerst een item om aan te passen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -180,10 +210,16 @@ public class AdminInschrijvingBuurtbewonerScherm  {
                             " AND locatie_id = " + selectedItem.getLocatie_id()
             );
             System.out.println(iResult + " rij verwijderd");
-
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
         });
     }

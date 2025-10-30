@@ -22,6 +22,7 @@ public class TaartSoortMaximaalAantalPersonenScherm {
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<MaximaalAantalPersonen> mapBox = new ComboBox<>();
     private final ListView<TaartSoortMaximaalAantalPersonen> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public TaartSoortMaximaalAantalPersonenScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -37,9 +38,12 @@ public class TaartSoortMaximaalAantalPersonenScherm {
         root.add(addButton, 1, 3);
         root.add(updateButton, 1, 4);
         root.add(deleteButton, 1, 5);
+        root.add(validationLabel, 2, 3);
 
         soortLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         mapLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
@@ -81,6 +85,17 @@ public class TaartSoortMaximaalAantalPersonenScherm {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
             MaximaalAantalPersonen maximaalAantalPersonen = mapBox.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (maximaalAantalPersonen == null) errorMsg.append("Selecteer een maximumnummer\n");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (soort != null && maximaalAantalPersonen != null) {
                 int iResult = insertData("INSERT INTO taartsoortenmaximaalaantelpersonen(soort_id, maxpers_id) " +
                         "VALUES (" + soort.getId() + ", " + maximaalAantalPersonen.getId() + ")");
@@ -92,6 +107,13 @@ public class TaartSoortMaximaalAantalPersonenScherm {
                     listview.getItems().add(newTSMAP);
                     soortBox.getSelectionModel().clearSelection();
                     mapBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Nieuwe combinatie is toegevoegd");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -101,8 +123,19 @@ public class TaartSoortMaximaalAantalPersonenScherm {
             MaximaalAantalPersonen maximaalAantalPersonen = mapBox.getSelectionModel().getSelectedItem();
             TaartSoortMaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (maximaalAantalPersonen == null) errorMsg.append("Selecteer een maximumnummer\n");
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+                errorMsg.append("Selecteer eerst een item om aan te passen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -121,6 +154,13 @@ public class TaartSoortMaximaalAantalPersonenScherm {
                     listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
                     mapBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Combinatie is aangepast");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het aanpassen");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -128,8 +168,10 @@ public class TaartSoortMaximaalAantalPersonenScherm {
         deleteButton.setOnAction(_ -> {
             TaartSoortMaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen");
+                errorMsg.append("Selecteer eerst een item om te verwijderen");
                 return;
             }
 
@@ -140,8 +182,15 @@ public class TaartSoortMaximaalAantalPersonenScherm {
             );
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
         });
     }

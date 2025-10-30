@@ -24,6 +24,7 @@ public class TaartSoortDatumStarttijdLocatieScherm {
     private final ComboBox<Starttijd> starttijdComboBox = new ComboBox<>();
     private final ComboBox<Locatie> locatieComboBox = new ComboBox<>();
     private final ListView<TaartSoortDatumStarttijdLocatie> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public TaartSoortDatumStarttijdLocatieScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -43,11 +44,14 @@ public class TaartSoortDatumStarttijdLocatieScherm {
         root.add(addButton, 1, 3);
         root.add(updateButton, 1, 4);
         root.add(deleteButton, 1, 5);
+        root.add(validationLabel, 2, 3);
 
         soortLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         datumLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         starttijdLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         locatieLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
@@ -103,6 +107,19 @@ public class TaartSoortDatumStarttijdLocatieScherm {
             Starttijd starttijd = starttijdComboBox.getSelectionModel().getSelectedItem();
             Locatie locatie = locatieComboBox.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (datum == null) errorMsg.append("Selecteer een datum\n");
+            if (starttijd == null) errorMsg.append("Selecteer een starttijd\n");
+            if (locatie == null) errorMsg.append("Selecteer een locatie\n");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (soort != null && datum != null && starttijd != null && locatie != null) {
                 int iResult = insertData("INSERT INTO taartsoortendatumsstarttijdenlocaties(soort_id, datum_id, starttijd_id, locatie_id) " +
                         "VALUES (" + soort.getId() + ", " + datum.getId() + ", " + starttijd.getId() + ", " + locatie.getId() + ")");
@@ -117,6 +134,13 @@ public class TaartSoortDatumStarttijdLocatieScherm {
                     listview.getItems().add(newTSDSL);
                     soortBox.getSelectionModel().clearSelection();
                     datumComboBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Nieuwe combinatie is toegevoegd");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -128,12 +152,22 @@ public class TaartSoortDatumStarttijdLocatieScherm {
             Locatie locatie = locatieComboBox.getSelectionModel().getSelectedItem();
             TaartSoortDatumStarttijdLocatie selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+            StringBuilder errorMsg = new StringBuilder();
+
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (datum == null) errorMsg.append("Selecteer een datum\n");
+            if (starttijd == null) errorMsg.append("Selecteer een starttijd\n");
+            if (locatie == null) errorMsg.append("Selecteer een locatie\n");
+            if (selectedItem == null) errorMsg.append("Selecteer eerst een item om aan te passen");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
-            if (soort != null && datum != null && starttijd != null && locatie != null) {
+            if (soort != null && datum != null && starttijd != null && locatie != null && selectedItem != null) {
                 int iResult = updateData(
                         "UPDATE taartsoortendatumsstarttijdenlocaties SET " +
                             "soort_id = " + soort.getId() + ", " +
@@ -154,6 +188,13 @@ public class TaartSoortDatumStarttijdLocatieScherm {
                     listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
                     datumComboBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Combinatie is aangepast");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het aanpassen");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -161,8 +202,16 @@ public class TaartSoortDatumStarttijdLocatieScherm {
         deleteButton.setOnAction(_ -> {
             TaartSoortDatumStarttijdLocatie selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen");
+                errorMsg.append("Selecteer eerst een item om aan te passen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -175,9 +224,17 @@ public class TaartSoortDatumStarttijdLocatieScherm {
             );
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
+
         });
     }
     private void loadSoorts() {

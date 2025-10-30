@@ -23,6 +23,7 @@ public class InschrijvingBuurtbewonerScherm {
     private final ComboBox<SoortOptie> optieComboBox = new ComboBox<>();
     private final ComboBox<Buurtbewoner> buurtbewonerComboBox = new ComboBox<>();
     private final VBox formBox = new VBox();
+    private final Label validationLabel = new Label();
 
     public InschrijvingBuurtbewonerScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(20));
@@ -35,9 +36,13 @@ public class InschrijvingBuurtbewonerScherm {
         optieLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         buurtbewonerLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
 
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
+
         // Form layout
         formBox.setAlignment(Pos.CENTER);
         formBox.getChildren().addAll(
+                validationLabel,
                 soortLabel, soortBox,
                 variantLabel, variantBox,
                 optieLabel, optieComboBox,
@@ -77,16 +82,32 @@ public class InschrijvingBuurtbewonerScherm {
             SoortOptie optie = optieComboBox.getSelectionModel().getSelectedItem();
             Buurtbewoner buurtbewoner = buurtbewonerComboBox.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (variant == null) errorMsg.append("Selecteer een variant\n");
+            if (optie == null) errorMsg.append("Selecteer een beschikbaar moment\n");
+            if (buurtbewoner == null) errorMsg.append("Selecteer een buurtbewoner\n");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (soort != null && variant != null && optie != null && buurtbewoner != null) {
                 int iResult = insertData("INSERT INTO inschrijvingenbuurtbewoners (buurtbewoner_id, soort_id, variant_id, datum_id, starttijd_id, locatie_id) " +
                                 "VALUES (" + buurtbewoner.getId() + ", " + soort.getId() + ", " + variant.getId() + ", " + optie.getDatum().getId() + ", " + optie.getStarttijd().getId() + ", " + optie.getLocatie().getId() + ")");
-                System.out.println(iResult + " rij toegevoegd");
-
                 if (iResult > 0) {
-                    soortBox.getSelectionModel().clearSelection();
-                    variantBox.getSelectionModel().clearSelection();
-                    optieComboBox.getSelectionModel().clearSelection();
-                    buurtbewonerComboBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Inschrijven is gelukt!");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                    formBox.getChildren().clear();
+                    formBox.getChildren().addAll(validationLabel);
+                } else {
+                    validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });

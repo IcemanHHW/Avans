@@ -18,6 +18,7 @@ public class MaximaalAantalPersonenScherm {
     private final Label mapLabel = new Label("Maximaal aantal personen:");
     private final TextField numberField = new TextField();
     private final ListView<MaximaalAantalPersonen> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public MaximaalAantalPersonenScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -31,12 +32,15 @@ public class MaximaalAantalPersonenScherm {
         root.add(addButton, 1, 3);
         root.add(updateButton, 1, 4);
         root.add(deleteButton, 1, 5);
+        root.add(validationLabel, 2, 3);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
         backButton.setOnAction(_ -> onBack.run());
 
         mapLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         // Only allow numbers
         numberField.setTextFormatter(new TextFormatter<>(change -> {
@@ -69,6 +73,16 @@ public class MaximaalAantalPersonenScherm {
         addButton.setOnAction(_ -> {
             String input = numberField.getText();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (input.isEmpty()) errorMsg.append("Buurtbewoner is leeg");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (!input.isEmpty()) {
                 try {
                     int number = Integer.parseInt(input); // Ensure it's an integer
@@ -80,9 +94,18 @@ public class MaximaalAantalPersonenScherm {
                         newMAP.setMaximumnummer(number);
                         listview.getItems().add(newMAP);
                         numberField.clear();
+                        validationLabel.setText("Maximumnummer is toegevoegd");
+                        validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                        validationLabel.setVisible(true);
+                    } else  {
+                        validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                        validationLabel.setVisible(true);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Ongeldige invoer: voer een geheel getal in.");
+                    validationLabel.setText("Ongeldige invoer: voer een geheel getal in");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -91,8 +114,14 @@ public class MaximaalAantalPersonenScherm {
             String input = numberField.getText();
             MaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (input.isEmpty()) errorMsg.append("Maximaal aantal personen is leeg");
+            if (selectedItem == null) errorMsg.append("Selecteer eerst een item om aan te passen");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -104,11 +133,18 @@ public class MaximaalAantalPersonenScherm {
 
                     if (iResult > 0) {
                         selectedItem.setMaximumnummer(number);
-                        listview.refresh();
-                        numberField.clear();
+                        validationLabel.setText("Maximumnummer is aangepast");
+                        validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                        validationLabel.setVisible(true);
+                    } else {
+                        validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                        validationLabel.setVisible(true);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Ongeldige invoer: voer een geheel getal in.");
+                    validationLabel.setText("Ongeldige invoer: voer een geheel getal in");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -116,16 +152,28 @@ public class MaximaalAantalPersonenScherm {
         deleteButton.setOnAction(_ -> {
             MaximaalAantalPersonen selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen.");
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (selectedItem == null) errorMsg.append("Selecteer eerst een item om aan te passen");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
             int iResult = updateData("DELETE FROM maximaalaantelpersonen WHERE id = " + selectedItem.getId());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
         });
 

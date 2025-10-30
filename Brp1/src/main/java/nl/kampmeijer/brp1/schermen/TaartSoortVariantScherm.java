@@ -24,6 +24,7 @@ public class TaartSoortVariantScherm {
     private final ComboBox<Soort> soortBox = new ComboBox<>();
     private final ComboBox<Variant> variantBox = new ComboBox<>();
     private final ListView<TaartSoortVariant> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public TaartSoortVariantScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -39,6 +40,7 @@ public class TaartSoortVariantScherm {
         root.add(addButton, 1, 3);
         root.add(updateButton, 1, 4);
         root.add(deleteButton, 1, 5);
+        root.add(validationLabel, 2, 3);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
@@ -46,6 +48,8 @@ public class TaartSoortVariantScherm {
 
         soortLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         variantLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         ResultSet r;
         ArrayList<TaartSoortVariant> allTSVs = new ArrayList<>();
@@ -83,6 +87,17 @@ public class TaartSoortVariantScherm {
             Soort soort = soortBox.getSelectionModel().getSelectedItem();
             Variant variant = variantBox.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (variant == null) errorMsg.append("Selecteer een variat\n");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (soort != null && variant != null) {
                 int iResult = insertData("INSERT INTO taartsoortenvarianten(soort_id, variant_id) " +
                         "VALUES (" + soort.getId() + ", " + variant.getId() + ")");
@@ -103,8 +118,18 @@ public class TaartSoortVariantScherm {
             Variant variant = variantBox.getSelectionModel().getSelectedItem();
             TaartSoortVariant selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (soort == null) errorMsg.append("Selecteer een soort\n");
+            if (variant == null) errorMsg.append("Selecteer een variant\n");
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+                errorMsg.append("Selecteer eerst een item om aan te passen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -123,6 +148,13 @@ public class TaartSoortVariantScherm {
                     listview.refresh();
                     soortBox.getSelectionModel().clearSelection();
                     variantBox.getSelectionModel().clearSelection();
+                    validationLabel.setText("Combinatie is aangepast");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het aanpassen");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -130,8 +162,16 @@ public class TaartSoortVariantScherm {
         deleteButton.setOnAction(_ -> {
             TaartSoortVariant selectedItem = listview.getSelectionModel().getSelectedItem();
 
+            StringBuilder errorMsg = new StringBuilder();
+
             if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen");
+                errorMsg.append("Selecteer eerst een item om te verwijderen");
+                return;
+            }
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -142,8 +182,15 @@ public class TaartSoortVariantScherm {
             );
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
         });
     }

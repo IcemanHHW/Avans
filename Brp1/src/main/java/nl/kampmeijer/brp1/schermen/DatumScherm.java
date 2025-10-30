@@ -19,6 +19,7 @@ public class DatumScherm {
     private final Label datumLabel = new Label("Datum:");
     private DatePicker datePicker = new DatePicker();
     private final ListView<Datum> listview = new ListView<>();
+    private final Label validationLabel = new Label();
 
     public DatumScherm(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
@@ -32,12 +33,15 @@ public class DatumScherm {
         root.add(addButton, 1, 3);
         root.add(updateButton, 1, 4);
         root.add(deleteButton, 1, 5);
+        root.add(validationLabel, 2, 3);
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
         backButton.setOnAction(_ -> onBack.run());
 
         datumLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+        validationLabel.setVisible(false);
 
         ResultSet r;
         ArrayList<Datum> allDatums = new ArrayList<>();
@@ -61,6 +65,16 @@ public class DatumScherm {
         addButton.setOnAction(_ -> {
             LocalDate input = datePicker.getValue();
 
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (input == null) errorMsg.append("Datum is leeg");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
+                return;
+            }
+
             if (input != null) {
                 int iResult = insertData("INSERT INTO datums(datum) values ('" + input + "')");
                 System.out.println(iResult + " rij toegevoegd");
@@ -69,6 +83,13 @@ public class DatumScherm {
                     newDatum.setDatum(input.toString());
                     listview.getItems().add(newDatum);
                     datePicker.setValue(null);
+                    validationLabel.setText("Datum is toegevoegd");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else  {
+                    validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -77,8 +98,14 @@ public class DatumScherm {
             LocalDate input = datePicker.getValue();
             Datum selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om aan te passen.");
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (input == null) errorMsg.append("Datum is leeg");
+            if (selectedItem == null) errorMsg.append("Selecteer eerst een item om aan te passen");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
@@ -89,6 +116,13 @@ public class DatumScherm {
                     selectedItem.setDatum(String.valueOf(input));
                     listview.refresh();
                     datePicker.setValue(null);
+                    validationLabel.setText("Datum is aangepast");
+                    validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
+                } else {
+                    validationLabel.setText("Er is iets misgegaan bij het opslaan");
+                    validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                    validationLabel.setVisible(true);
                 }
             }
         });
@@ -96,16 +130,28 @@ public class DatumScherm {
         deleteButton.setOnAction(_ -> {
             Datum selectedItem = listview.getSelectionModel().getSelectedItem();
 
-            if (selectedItem == null) {
-                System.out.println("Selecteer eerst een item om te verwijderen");
+            StringBuilder errorMsg = new StringBuilder();
+
+            if (selectedItem == null) errorMsg.append("Selecteer eerst een item om aan te passen");
+
+            if (!errorMsg.isEmpty()) {
+                validationLabel.setText(errorMsg.toString());
+                validationLabel.setVisible(true);
                 return;
             }
 
             int iResult = updateData("DELETE FROM datums WHERE id = " + selectedItem.getId());
             System.out.println(iResult + " rij verwijderd");
             if (iResult > 0) {
+                validationLabel.setText("Verwijderen is gelukt");
+                validationLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
                 listview.getItems().remove(selectedItem);
                 listview.refresh();
+            } else {
+                validationLabel.setText("Er is iets misgegaan bij het verwijderen");
+                validationLabel.setStyle("-fx-text-fill: red; -fx-font-size: 18px;");
+                validationLabel.setVisible(true);
             }
         });
     }
