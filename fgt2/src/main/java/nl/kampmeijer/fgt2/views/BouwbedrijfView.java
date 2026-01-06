@@ -77,7 +77,7 @@ public class BouwbedrijfView {
     }
 
     /**
-     * Adds a new woontoren to the database and ListView.
+     * Adds a new bouwbedrijf to the database and ListView.
      */
     private void addBouwbedrijf() {
         String input = textField.getText().trim();
@@ -170,7 +170,7 @@ public class BouwbedrijfView {
     }
 
     /**
-     * Validates the input for a woontoren name.
+     * Validates the input
      *
      * @param input the input string
      * @return true if valid, false otherwise

@@ -170,7 +170,7 @@ public class WoontorenView {
     }
 
     /**
-     * Validates the input for a woontoren name.
+     * Validates the input
      *
      * @param input the input string
      * @return true if valid, false otherwise
