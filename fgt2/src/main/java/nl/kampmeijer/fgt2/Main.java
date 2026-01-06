@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import nl.kampmeijer.fgt2.views.AdminView;
+import nl.kampmeijer.fgt2.views.BouwbedrijfView;
 import nl.kampmeijer.fgt2.views.WoontorenView;
 
 public class Main extends Application {
@@ -17,36 +19,26 @@ public class Main extends Application {
         scene = new Scene(root, 900, 900);
         stage.setScene(scene);
         stage.setTitle("Meldingen Gevallen Gesteente");
-        showStartView();
+        showAdminView();
         stage.setMaximized(true);
         stage.show();
     }
 
-    private void showStartView() {
-        GridPane root = new GridPane();
-        //new StartScherm(root, this::showInschrijvenScherm, this::showAdminScherm);
-        scene.setRoot(root);
-        primaryStage.setTitle("Meldingen Gevallen Gesteente - Start");
-    }
-
     private void showAdminView() {
         GridPane root = new GridPane();
-//        new AdminScherm(root,
-//                this::showBuurtbewonerScherm,
-//                this::showSoortScherm,
-//                this::showVariantScherm,
-//                this::showDatumScherm,
-//                this::showStarttijdScherm,
-//                this::showLocatieScherm,
-//                this::showMaxPersonenScherm,
-//                this::showSoortVariantScherm,
-//                this::showSoortMaxPersonenScherm,
-//                this::showSoortDatumStarttijdLocatieScherm,
-//                this::showAdminInschrijvingBuurtbewonerScherm,
-//                this::showStartScherm
-//        );
+        new AdminView(root,
+                this::showBouwbedrijfView,
+                this::showWoontorenView
+        );
         scene.setRoot(root);
         primaryStage.setTitle("Meldingen Gevallen Gesteente - Admin");
+    }
+
+    private void showBouwbedrijfView() {
+        GridPane root = new GridPane();
+        new BouwbedrijfView(root, this::showAdminView);
+        scene.setRoot(root);
+        primaryStage.setTitle("Meldingen Gevallen Gesteente - Bouwbedrijf");
     }
 
     private void showWoontorenView() {
