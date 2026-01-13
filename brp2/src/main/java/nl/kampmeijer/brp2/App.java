@@ -4,13 +4,14 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
-public class Main extends Application {
+public class App extends Application {
     private Stage primaryStage;
     private Scene scene;
 
     @Override
-    public void start(Stage stage) {
+    public void start(@NotNull Stage stage) {
         this.primaryStage = stage;
         GridPane root = new GridPane();
         scene = new Scene(root, 900, 900);

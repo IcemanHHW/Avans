@@ -1,6 +1,9 @@
 module nl.kampmeijer.brp2 {
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.jetbrains.annotations;
+    requires java.sql;
+    requires org.apache.commons.dbcp2;
 
 
     opens nl.kampmeijer.brp2 to javafx.fxml;
