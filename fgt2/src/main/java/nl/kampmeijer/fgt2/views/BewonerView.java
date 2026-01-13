@@ -102,19 +102,19 @@ public class BewonerView {
         }
 
         String nameInput = nameField.getText().trim();
-        if (isValidInput(bsnInput)) {
+        if (isValidInput(nameInput)) {
             validationLabel.setText("BSN is verplicht (2–50 tekens).");
             return;
         }
 
         String appartementNummerInput = appartementNummerField.getText().trim();
-        if (isValidInput2(bsnInput)) {
+        if (isValidInput2(appartementNummerInput)) {
             validationLabel.setText("Huisnummer is verplicht (1–3 tekens).");
             return;
         }
 
         String verdiepingInput = appartementNummerField.getText().trim();
-        if (isValidInput2(bsnInput)) {
+        if (isValidInput2(verdiepingInput)) {
             validationLabel.setText("Huisnummer is verplicht (1–3 tekens).");
             return;
         }
@@ -126,7 +126,7 @@ public class BewonerView {
         }
 
         try {
-            int result = insertData("INSERT INTO bouwbedrijven (bsn, nm, pprtmntnr, vrdpng, wntrnnm) VALUES ('" + bsnInput + ", " + nameInput + ", " + appartementNummerInput + ", " + verdiepingInput + ", " + woontoren.getWntrnnm() "')");
+            int result = insertData("INSERT INTO bewoners (bsn, nm, pprtmntnr, vrdpng, wntrnnm) VALUES ('" + bsnInput + ", " + nameInput + ", " + appartementNummerInput + ", " + verdiepingInput + ", " + woontoren.getWntrnnm() + "')");
             if (result > 0) {
                 Bewoner b = new Bewoner();
                 b.setBsn(bsnInput);
@@ -156,21 +156,55 @@ public class BewonerView {
      */
     private void updateBewoner() {
         Bewoner selected = listview.getSelectionModel().getSelectedItem();
-        String input = textField.getText().trim();
+        String bsnInput = bsnField.getText().trim();
+        if (isValidInput(bsnInput)) {
+            validationLabel.setText("BSN is verplicht (2–50 tekens).");
+            return;
+        }
+
+        String nameInput = nameField.getText().trim();
+        if (isValidInput(nameInput)) {
+            validationLabel.setText("BSN is verplicht (2–50 tekens).");
+            return;
+        }
+
+        String appartementNummerInput = appartementNummerField.getText().trim();
+        if (isValidInput2(appartementNummerInput)) {
+            validationLabel.setText("Huisnummer is verplicht (1–3 tekens).");
+            return;
+        }
+
+        String verdiepingInput = appartementNummerField.getText().trim();
+        if (isValidInput2(verdiepingInput)) {
+            validationLabel.setText("Huisnummer is verplicht (1–3 tekens).");
+            return;
+        }
+
+        Woontoren woontoren = woontorenComboBox.getSelectionModel().getSelectedItem();
+        if (woontoren == null) {
+            validationLabel.setText("Woontoren is verplicht.");
+            return;
+        }
+
         if (selected == null) {
             validationLabel.setText("Selecteer eerst een bewoner.");
             return;
         }
-        if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe naam in.");
-            return;
-        }
         try {
-            int result = updateData("UPDATE bouwbedrijven SET nm = '" + input + "' WHERE bsn = '" + selected.getBsn() + "'");
+            int result = updateData("UPDATE bouwbedrijven SET " +
+                    "bsn = '" + bsnInput + ", nm = '" + nameInput + ", pprtmntnr = '" + appartementNummerInput + ", vrdpng = '" + verdiepingInput + ", wntrnnm = '" + woontoren.getWntrnnm() +  "' WHERE bsn = '" + selected.getBsn() + "'");
             if (result > 0) {
-                selected.setNm(input);
+                selected.setBsn(bsnInput);
+                selected.setNm(nameInput);
+                selected.setPprtmntnr(appartementNummerInput);
+                selected.setVrdpng(verdiepingInput);
+                selected.setWntrnnm(woontoren.getWntrnnm());
                 listview.refresh();
-                textField.clear();
+                bsnField.clear();
+                nameField.clear();
+                appartementNummerField.clear();
+                verdiepingField.clear();
+                woontorenComboBox.getSelectionModel().clearSelection();
                 validationLabel.setText("");
             }
         } catch (NullPointerException e) {
@@ -205,7 +239,7 @@ public class BewonerView {
         }
 
         try {
-            int result = updateData("DELETE FROM bouwbedrijven WHERE bsn = '" + selected.getBsn() + "'");
+            int result = updateData("DELETE FROM bewoners WHERE bsn = '" + selected.getBsn() + "'");
             if (result > 0) {
                 listview.getItems().remove(selected);
                 validationLabel.setText("");
