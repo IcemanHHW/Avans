@@ -20,9 +20,12 @@ public class DatabaseHelper {
             Connection con = DBCPDataSource.getConnection();
             Statement stat = con.createStatement();
             result = stat.executeQuery(sql);
-        } catch (SQLException e) {
-            System.out.println("Fout bij getData()");
-            e.printStackTrace();
+        } catch (java.sql.SQLException e) {
+            System.err.println("SQL-fout bij getData(): " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.err.println("Null-waarde bij getData()");
+        } catch (RuntimeException e) {
+            System.err.println("Onverwachte fout: " + e.getMessage());
         }
         return result;
     }
@@ -39,9 +42,12 @@ public class DatabaseHelper {
             Connection con = DBCPDataSource.getConnection();
             Statement stat = con.createStatement();
             result = stat.executeUpdate(insertStatement);
-        } catch (SQLException e) {
-            System.out.println("Fout bij insertData()");
-            e.printStackTrace();
+        } catch (java.sql.SQLException e) {
+            System.err.println("SQL-fout bij insertData(): " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.err.println("Null-waarde bij insertData()");
+        } catch (RuntimeException e) {
+            System.err.println("Onverwachte fout: " + e.getMessage());
         }
         return result;
     }
@@ -58,9 +64,12 @@ public class DatabaseHelper {
             Connection con = DBCPDataSource.getConnection();
             Statement stat = con.createStatement();
             result = stat.executeUpdate(updateStatement);
-        } catch (SQLException e) {
-            System.out.println("Fout bij updateData()");
-            e.printStackTrace();
+        } catch (java.sql.SQLException e) {
+            System.err.println("SQL-fout bij updateData(): " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.err.println("Null-waarde bij updateData()");
+        } catch (RuntimeException e) {
+            System.err.println("Onverwachte fout: " + e.getMessage());
         }
         return result;
     }

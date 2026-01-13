@@ -42,14 +42,14 @@ public class CategorieView {
 
         categorieLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-        loadCategories();
+        loadCategorieen();
 
         addButton.setOnAction(_ -> addCategorie());
         updateButton.setOnAction(_ -> updateCategorie());
         deleteButton.setOnAction(_ -> deleteCategorie());
     }
 
-    private void loadCategories() {
+    private void loadCategorieen() {
         try {
             ResultSet r = getData("SELECT * FROM categorieen");
 
