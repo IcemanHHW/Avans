@@ -55,7 +55,7 @@ public class CategorieView {
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "DATABASE_LOAD_ERROR" ->
-                        validationLabel.setText("Databasefout bij laden van categorieën");
+                        validationLabel.setText("Databasefout bij laden van Categorieën");
                 case "DATABASE_NULL_ERROR" ->
                         validationLabel.setText("Interne fout bij laden van gegevens");
                 default ->
@@ -92,12 +92,12 @@ public class CategorieView {
         String input = textField.getText().trim();
 
         if (selected == null) {
-            validationLabel.setText("Selecteer eerst een categorie");
+            validationLabel.setText("Selecteer eerst een Categorie");
             return;
         }
 
         if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe categorie naam in");
+            validationLabel.setText("Voer een geldige nieuwe Categorie naam in");
             return;
         }
 
@@ -109,7 +109,7 @@ public class CategorieView {
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            validationLabel.setText("Fout bij aanpassen categorie");
+            validationLabel.setText("Fout bij aanpassen Categorie");
         }
     }
 
@@ -117,7 +117,7 @@ public class CategorieView {
         Categorie selected = listview.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
-            validationLabel.setText("Selecteer eerst een categorie");
+            validationLabel.setText("Selecteer eerst een Categorie");
             return;
         }
 
@@ -138,7 +138,7 @@ public class CategorieView {
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            validationLabel.setText("Fout bij verwijderen categorie");
+            validationLabel.setText("Fout bij verwijderen Categorie");
         }
     }
 

@@ -18,13 +18,13 @@ public class LocatieService {
             ResultSet r = getData("SELECT * FROM locaties");
 
             while (r.next()) {
-                locaties.add(new Locatie(r.getString("locatieNaam")));
+                locaties.add(new Locatie(r.getString("locatienaam")));
             }
         } catch (SQLException e) {
-            System.err.println("SQL-fout bij ophalen locaties: " + e.getMessage());
+            System.err.println("SQL-fout bij ophalen Locaties: " + e.getMessage());
             throw new RuntimeException("DATABASE_LOAD_ERROR");
         } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen locaties");
+            System.err.println("Null-waarde bij ophalen Locaties");
             throw new RuntimeException("DATABASE_NULL_ERROR");
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
@@ -52,9 +52,8 @@ public class LocatieService {
             return result > 0;
 
         } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen locatie");
+            System.err.println("Null bij aanpassen Locatie");
             throw new RuntimeException("DATABASE_NULL_ERROR");
-
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;
@@ -65,7 +64,6 @@ public class LocatieService {
         try {
             int result = updateData("DELETE FROM locaties WHERE locatieNaam = '" + name + "'");
             return result > 0;
-
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;

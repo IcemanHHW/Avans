@@ -18,13 +18,13 @@ public class CategorieService {
             ResultSet r = getData("SELECT * FROM categorieen");
 
             while (r.next()) {
-                categorieen.add(new Categorie(r.getString("categorieNaam")));
+                categorieen.add(new Categorie(r.getString("categorienaam")));
             }
         } catch (SQLException e) {
-            System.err.println("SQL-fout bij ophalen categorieën: " + e.getMessage());
+            System.err.println("SQL-fout bij ophalen Categorieën: " + e.getMessage());
             throw new RuntimeException("DATABASE_LOAD_ERROR");
         } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen categorieën");
+            System.err.println("Null-waarde bij ophalen Categorieën");
             throw new RuntimeException("DATABASE_NULL_ERROR");
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
@@ -50,9 +50,8 @@ public class CategorieService {
         try {
             int result = updateData("UPDATE categorieen SET categorieNaam = '" + newName + "' WHERE categorieNaam = '" + oldName + "'");
             return result > 0;
-
         } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen categorie");
+            System.err.println("Null bij aanpassen Categorie");
             throw new RuntimeException("DATABASE_NULL_ERROR");
 
         } catch (RuntimeException e) {
@@ -65,7 +64,6 @@ public class CategorieService {
         try {
             int result = updateData("DELETE FROM categorieen WHERE categorieNaam = '" + name + "'");
             return result > 0;
-
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;

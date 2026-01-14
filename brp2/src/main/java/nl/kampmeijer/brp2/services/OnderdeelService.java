@@ -18,13 +18,13 @@ public class OnderdeelService {
             ResultSet r = getData("SELECT * FROM onderdelen");
 
             while (r.next()) {
-                onderdelen.add(new Onderdeel(r.getString("onderdeelNaam")));
+                onderdelen.add(new Onderdeel(r.getString("onderdeelnaam")));
             }
         } catch (SQLException e) {
-            System.err.println("SQL-fout bij ophalen onderdelen: " + e.getMessage());
+            System.err.println("SQL-fout bij ophalen Onderdelen: " + e.getMessage());
             throw new RuntimeException("DATABASE_LOAD_ERROR");
         } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen onderdelen");
+            System.err.println("Null-waarde bij ophalen Onderdelen");
             throw new RuntimeException("DATABASE_NULL_ERROR");
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
@@ -52,9 +52,8 @@ public class OnderdeelService {
             return result > 0;
 
         } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen onderdeel");
+            System.err.println("Null bij aanpassen Onderdeel");
             throw new RuntimeException("DATABASE_NULL_ERROR");
-
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;
@@ -65,7 +64,6 @@ public class OnderdeelService {
         try {
             int result = updateData("DELETE FROM onderdelen WHERE onderdeelNaam = '" + name + "'");
             return result > 0;
-
         } catch (RuntimeException e) {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;
