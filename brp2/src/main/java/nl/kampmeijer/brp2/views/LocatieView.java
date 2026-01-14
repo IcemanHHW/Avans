@@ -7,13 +7,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp2.models.Locatie;
 import org.jetbrains.annotations.NotNull;
-import java.sql.ResultSet;
-import static nl.kampmeijer.brp2.database.DatabaseHelper.*;
+import nl.kampmeijer.brp2.services.LocatieService;
 
 public class LocatieView {
     private final Label validationLabel = new Label();
     private final TextField textField = new TextField();
     private final ListView<Locatie> listview = new ListView<>();
+    private final LocatieService locatieService = new LocatieService();
 
     public LocatieView(@NotNull GridPane root) {
         root.setPadding(new Insets(10));
@@ -51,21 +51,16 @@ public class LocatieView {
 
     private void loadLocaties() {
         try {
-            ResultSet r = getData("SELECT * FROM locaties");
-
-            while (r.next()) {
-                Locatie l = new Locatie(r.getString("locatieNaam"));
-                listview.getItems().add(l);
-            }
-        } catch (java.sql.SQLException e) {
-            System.err.println("SQL-fout bij ophalen locaties: " + e.getMessage());
-            validationLabel.setText("Databasefout bij laden van locaties");
-        } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen locaties");
-            validationLabel.setText("Interne fout bij laden van gegevens");
+            listview.getItems().addAll(locatieService.getAll());
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            switch (e.getMessage()) {
+                case "DATABASE_LOAD_ERROR" ->
+                        validationLabel.setText("Databasefout bij laden van locaties");
+                case "DATABASE_NULL_ERROR" ->
+                        validationLabel.setText("Interne fout bij laden van gegevens");
+                default ->
+                        validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
@@ -78,47 +73,43 @@ public class LocatieView {
         }
 
         try {
-            int result = insertData("INSERT INTO locaties (locatieNaam) VALUES ('" + input + "')");
-            if (result > 0) {
-                Locatie l = new Locatie(input);
-                listview.getItems().add(l);
+            if (locatieService.add(input)) {
+                listview.getItems().add(new Locatie(input));
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Ongeldige invoer: " + e.getMessage());
-            validationLabel.setText("Ongeldige invoer");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            if ("INVALID_INPUT".equals(e.getMessage())) {
+                validationLabel.setText("Ongeldige invoer");
+            } else {
+                validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
     private void updateLocatie() {
         Locatie selected = listview.getSelectionModel().getSelectedItem();
         String input = textField.getText().trim();
+
         if (selected == null) {
             validationLabel.setText("Selecteer eerst een locatie");
             return;
         }
+
         if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe locatie naam in.");
+            validationLabel.setText("Voer een geldige nieuwe locatie naam in");
             return;
         }
+
         try {
-            int result = updateData("UPDATE locaties SET locatieNaam = '" + input + "' WHERE locatieNaam = '" + selected.getLocatieNaam() + "'");
-            if (result > 0) {
+            if (locatieService.update(selected.getLocatieNaam(), input)) {
                 selected.setLocatieNaam(input);
                 listview.refresh();
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen locatie");
-            validationLabel.setText("Interne fout opgetreden");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij aanpassen locatie");
         }
     }
 
@@ -142,14 +133,12 @@ public class LocatieView {
         }
 
         try {
-            int result = updateData("DELETE FROM locaties WHERE locatieNaam = '" + selected.getLocatieNaam() + "'");
-            if (result > 0) {
+            if (locatieService.delete(selected.getLocatieNaam())) {
                 listview.getItems().remove(selected);
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij verwijderen locatie");
         }
     }
 
@@ -161,6 +150,6 @@ public class LocatieView {
      */
     private boolean isValidInput(String input) {
 
-        return input != null && input.length() >= 2 && input.length() <= 50;
+        return input == null || input.length() < 2 || input.length() > 50;
     }
 }

@@ -6,14 +6,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp2.models.Onderdeel;
+import nl.kampmeijer.brp2.services.OnderdeelService;
 import org.jetbrains.annotations.NotNull;
-import java.sql.ResultSet;
-import static nl.kampmeijer.brp2.database.DatabaseHelper.*;
 
 public class OnderdeelView {
     private final Label validationLabel = new Label();
     private final TextField textField = new TextField();
     private final ListView<Onderdeel> listview = new ListView<>();
+    private final OnderdeelService onderdeelService = new OnderdeelService();
 
     public OnderdeelView(@NotNull GridPane root) {
         root.setPadding(new Insets(10));
@@ -51,21 +51,16 @@ public class OnderdeelView {
 
     private void loadOnderdelen() {
         try {
-            ResultSet r = getData("SELECT * FROM onderdelen");
-
-            while (r.next()) {
-                Onderdeel o = new Onderdeel(r.getString("onderdeelNaam"));
-                listview.getItems().add(o);
-            }
-        } catch (java.sql.SQLException e) {
-            System.err.println("SQL-fout bij ophalen onderdelen: " + e.getMessage());
-            validationLabel.setText("Databasefout bij laden van onderdelen");
-        } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen onderdelen");
-            validationLabel.setText("Interne fout bij laden van gegevens");
+            listview.getItems().addAll(onderdeelService.getAll());
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            switch (e.getMessage()) {
+                case "DATABASE_LOAD_ERROR" ->
+                        validationLabel.setText("Databasefout bij laden van onderdelen");
+                case "DATABASE_NULL_ERROR" ->
+                        validationLabel.setText("Interne fout bij laden van gegevens");
+                default ->
+                        validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
@@ -78,47 +73,43 @@ public class OnderdeelView {
         }
 
         try {
-            int result = insertData("INSERT INTO onderdelen (onderdeelNaam) VALUES ('" + input + "')");
-            if (result > 0) {
-                Onderdeel o = new Onderdeel(input);
-                listview.getItems().add(o);
+            if (onderdeelService.add(input)) {
+                listview.getItems().add(new Onderdeel(input));
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Ongeldige invoer: " + e.getMessage());
-            validationLabel.setText("Ongeldige invoer");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            if ("INVALID_INPUT".equals(e.getMessage())) {
+                validationLabel.setText("Ongeldige invoer");
+            } else {
+                validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
     private void updateOnderdeel() {
         Onderdeel selected = listview.getSelectionModel().getSelectedItem();
         String input = textField.getText().trim();
+
         if (selected == null) {
             validationLabel.setText("Selecteer eerst een onderdeel");
             return;
         }
+
         if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe onderdeel naam in.");
+            validationLabel.setText("Voer een geldige nieuwe onderdeel naam in");
             return;
         }
+
         try {
-            int result = updateData("UPDATE onderdelen SET onderdeelNaam = '" + input + "' WHERE onderdeelNaam = '" + selected.getOnderdeelNaam() + "'");
-            if (result > 0) {
+            if (onderdeelService.update(selected.getOnderdeelNaam(), input)) {
                 selected.setOnderdeelNaam(input);
                 listview.refresh();
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen onderdeel");
-            validationLabel.setText("Interne fout opgetreden");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij aanpassen onderdeel");
         }
     }
 
@@ -142,14 +133,12 @@ public class OnderdeelView {
         }
 
         try {
-            int result = updateData("DELETE FROM onderdelen WHERE onderdeelNaam = '" + selected.getOnderdeelNaam() + "'");
-            if (result > 0) {
+            if (onderdeelService.delete(selected.getOnderdeelNaam())) {
                 listview.getItems().remove(selected);
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij verwijderen onderdeel");
         }
     }
 
@@ -161,6 +150,6 @@ public class OnderdeelView {
      */
     private boolean isValidInput(String input) {
 
-        return input != null && input.length() >= 2 && input.length() <= 50;
+        return input == null || input.length() < 2 || input.length() > 50;
     }
 }

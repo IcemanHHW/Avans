@@ -97,7 +97,7 @@ public class CategorieView {
         }
 
         if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige naam in");
+            validationLabel.setText("Voer een geldige nieuwe categorie naam in");
             return;
         }
 
