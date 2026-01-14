@@ -7,13 +7,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp2.models.Categorie;
 import org.jetbrains.annotations.NotNull;
-import java.sql.ResultSet;
-import static nl.kampmeijer.brp2.database.DatabaseHelper.*;
+import nl.kampmeijer.brp2.services.CategorieService;
 
 public class CategorieView {
     private final Label validationLabel = new Label();
     private final TextField textField = new TextField();
     private final ListView<Categorie> listview = new ListView<>();
+    private final CategorieService categorieService = new CategorieService();
 
     public CategorieView(@NotNull GridPane root) {
         root.setPadding(new Insets(10));
@@ -51,21 +51,16 @@ public class CategorieView {
 
     private void loadCategorieen() {
         try {
-            ResultSet r = getData("SELECT * FROM categorieen");
-
-            while (r.next()) {
-                Categorie c = new Categorie(r.getString("categorieNaam"));
-                listview.getItems().add(c);
-            }
-        } catch (java.sql.SQLException e) {
-            System.err.println("SQL-fout bij ophalen categorieën: " + e.getMessage());
-            validationLabel.setText("Databasefout bij laden van categorieën");
-        } catch (NullPointerException e) {
-            System.err.println("Null-waarde bij ophalen categorieën");
-            validationLabel.setText("Interne fout bij laden van gegevens");
+            listview.getItems().addAll(categorieService.getAll());
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            switch (e.getMessage()) {
+                case "DATABASE_LOAD_ERROR" ->
+                        validationLabel.setText("Databasefout bij laden van categorieën");
+                case "DATABASE_NULL_ERROR" ->
+                        validationLabel.setText("Interne fout bij laden van gegevens");
+                default ->
+                        validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
@@ -78,47 +73,43 @@ public class CategorieView {
         }
 
         try {
-            int result = insertData("INSERT INTO categorieen (categorieNaam) VALUES ('" + input + "')");
-            if (result > 0) {
-                Categorie c = new Categorie(input);
-                listview.getItems().add(c);
+            if (categorieService.add(input)) {
+                listview.getItems().add(new Categorie(input));
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Ongeldige invoer: " + e.getMessage());
-            validationLabel.setText("Ongeldige invoer");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            if ("INVALID_INPUT".equals(e.getMessage())) {
+                validationLabel.setText("Ongeldige invoer");
+            } else {
+                validationLabel.setText("Onverwachte fout opgetreden");
+            }
         }
     }
 
     private void updateCategorie() {
         Categorie selected = listview.getSelectionModel().getSelectedItem();
         String input = textField.getText().trim();
+
         if (selected == null) {
             validationLabel.setText("Selecteer eerst een categorie");
             return;
         }
+
         if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe categorie naam in.");
+            validationLabel.setText("Voer een geldige naam in");
             return;
         }
+
         try {
-            int result = updateData("UPDATE categorieen SET categorieNaam = '" + input + "' WHERE categorieNaam = '" + selected.getCategorieNaam() + "'");
-            if (result > 0) {
+            if (categorieService.update(selected.getCategorieNaam(), input)) {
                 selected.setCategorieNaam(input);
                 listview.refresh();
                 textField.clear();
                 validationLabel.setText("");
             }
-        } catch (NullPointerException e) {
-            System.err.println("Null bij aanpassen categorie");
-            validationLabel.setText("Interne fout opgetreden");
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij aanpassen categorie");
         }
     }
 
@@ -142,14 +133,12 @@ public class CategorieView {
         }
 
         try {
-            int result = updateData("DELETE FROM categorieen WHERE categorieNaam = '" + selected.getCategorieNaam() + "'");
-            if (result > 0) {
+            if (categorieService.delete(selected.getCategorieNaam())) {
                 listview.getItems().remove(selected);
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            System.err.println("Onverwachte fout: " + e.getMessage());
-            validationLabel.setText("Onverwachte fout opgetreden");
+            validationLabel.setText("Fout bij verwijderen categorie");
         }
     }
 
@@ -161,6 +150,6 @@ public class CategorieView {
      */
     private boolean isValidInput(String input) {
 
-        return input != null && input.length() >= 2 && input.length() <= 50;
+        return input == null || input.length() < 2 || input.length() > 50;
     }
 }
