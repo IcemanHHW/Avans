@@ -99,7 +99,7 @@ public class BinnenLocatieOnderdeelView {
 
         try {
             if (binnenLocatieOnderdeelService.add(onderdeelNaamBox.getOnderdeelNaam(), ruimteNaamInput, verdiepingNummerInput)) {
-                listview.getItems().add(new BinnenLocatieOnderdeel(onderdeelNaamBox.getOnderdeelNaam(), ruimteNaamInput, verdiepingNummerInput));
+                listview.getItems().add(new BinnenLocatieOnderdeel(1, null, onderdeelNaamBox, ruimteNaamInput, verdiepingNummerInput));
                 onderdeelComboBox.getSelectionModel().clearSelection();
                 ruimteNaamField.clear();
                 verdiepingNummerField.clear();
