@@ -6,6 +6,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp2.models.BinnenLocatieOnderdeel;
+import nl.kampmeijer.brp2.models.Locatie;
 import nl.kampmeijer.brp2.models.Onderdeel;
 import nl.kampmeijer.brp2.services.BinnenLocatieOnderdeelService;
 import nl.kampmeijer.brp2.services.OnderdeelService;
@@ -54,6 +55,14 @@ public class BinnenLocatieOnderdeelView {
         ruimteNaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         verdiepingNummerlabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
+        listview.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(BinnenLocatieOnderdeel item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.locatieOnderdeelInfo());
+            }
+        });
+
         loadBinnenLocatiesOnderdelen();
         loadOnderdelen();
 
@@ -78,6 +87,7 @@ public class BinnenLocatieOnderdeelView {
     }
 
     private void addBinnenLocatieOnderdeel() {
+        Locatie locatie = new Locatie("Binnenshuis");
         Onderdeel onderdeelNaamBox = onderdeelComboBox.getSelectionModel().getSelectedItem();
         String ruimteNaamInput = ruimteNaamField.getText().trim();
         String verdiepingNummerInput = verdiepingNummerField.getText().trim();
@@ -87,24 +97,20 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (isValidInput(ruimteNaamInput)) {
+        if (isInvalidInput(ruimteNaamInput)) {
             validationLabel.setText("Ruimte is verplicht (2–50 tekens)");
             return;
         }
 
-        if (isValidInput(verdiepingNummerInput)) {
+        if (isInvalidInput(verdiepingNummerInput)) {
             validationLabel.setText("Verdieping is verplicht (2–50 tekens)");
             return;
         }
 
         try {
-            if (binnenLocatieOnderdeelService.add(onderdeelNaamBox.getOnderdeelNaam(), ruimteNaamInput, verdiepingNummerInput)) {
-                listview.getItems().add(new BinnenLocatieOnderdeel(1, null, onderdeelNaamBox, ruimteNaamInput, verdiepingNummerInput));
-                onderdeelComboBox.getSelectionModel().clearSelection();
-                ruimteNaamField.clear();
-                verdiepingNummerField.clear();
-                validationLabel.setText("");
-            }
+            BinnenLocatieOnderdeel newBLO = binnenLocatieOnderdeelService.add(locatie, onderdeelNaamBox, ruimteNaamInput, verdiepingNummerInput);
+            listview.getItems().add(newBLO);
+            clearForm();
         } catch (RuntimeException e) {
             if ("INVALID_INPUT".equals(e.getMessage())) {
                 validationLabel.setText("Ongeldige invoer");
@@ -130,12 +136,12 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (isValidInput(ruimteNaamInput)) {
+        if (isInvalidInput(ruimteNaamInput)) {
             validationLabel.setText("Voer een geldige nieuwe Ruimte naam in");
             return;
         }
 
-        if (isValidInput(verdiepingNummerInput)) {
+        if (isInvalidInput(verdiepingNummerInput)) {
             validationLabel.setText("Voer een geldige nieuwe Verdiepingnummer in");
             return;
         }
@@ -146,13 +152,10 @@ public class BinnenLocatieOnderdeelView {
                 selected.setRuimteNaam(ruimteNaamInput);
                 selected.setVerdiepingNummer(verdiepingNummerInput);
                 listview.refresh();
-                onderdeelComboBox.getSelectionModel().clearSelection();
-                ruimteNaamField.clear();
-                verdiepingNummerField.clear();
-                validationLabel.setText("");
+                clearForm();
             }
         } catch (RuntimeException e) {
-            validationLabel.setText("Fout bij aanpassen locatie");
+            validationLabel.setText("Fout bij aanpassen BinnenLocatieOnderdeel");
         }
     }
 
@@ -200,14 +203,20 @@ public class BinnenLocatieOnderdeelView {
         }
     }
 
+    private void clearForm() {
+        onderdeelComboBox.getSelectionModel().clearSelection();
+        ruimteNaamField.clear();
+        verdiepingNummerField.clear();
+        validationLabel.setText("");
+    }
+
     /**
      * Validates the input
      *
      * @param input the input string
      * @return true if valid, false otherwise
      */
-    private boolean isValidInput(String input) {
-
+    private boolean isInvalidInput(String input) {
         return input == null || input.length() < 2 || input.length() > 50;
     }
 }

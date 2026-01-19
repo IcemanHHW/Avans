@@ -44,11 +44,17 @@ public class BinnenLocatieOnderdeelService {
         return binnenLocatieOnderdelen;
     }
 
-    public boolean add(String onderdeelNaam, String ruimteNaam, String verdiepingNummer) {
+    public BinnenLocatieOnderdeel add(Locatie locatie, Onderdeel onderdeel, String ruimteNaam, String verdiepingNummer) {
         try {
-            int result = insertData("INSERT INTO locatiesonderdelen (locatienaam, onderdeelnaam, ruimtenaam, verdiepingnummer) " +
-                    "VALUES ('Binnenshuis', '" + onderdeelNaam + "', '" + ruimteNaam + "', '" + verdiepingNummer + "'");
-            return result > 0;
+            int loId = insertDataAndGetId(
+                    "INSERT INTO locatiesonderdelen (locatienaam, onderdeelnaam, ruimtenaam, verdiepingnummer) " +
+                            "VALUES ('" + locatie + "', '" + onderdeel.getOnderdeelNaam() + "', '" + ruimteNaam + "', '" + verdiepingNummer + "'");
+
+            if (loId <= 0) {
+                throw new RuntimeException("DATABASE_INSERT_ERROR");
+            }
+
+            return new BinnenLocatieOnderdeel(loId, locatie, onderdeel, ruimteNaam, verdiepingNummer);
         } catch (IllegalArgumentException e) {
             System.err.println("Ongeldige invoer: " + e.getMessage());
             throw new RuntimeException("INVALID_INPUT");

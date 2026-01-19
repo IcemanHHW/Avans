@@ -73,4 +73,26 @@ public class DatabaseHelper {
         }
         return result;
     }
+
+    public static int insertDataAndGetId(String insertStatement) {
+        int generatedId = -1;
+
+        try {
+            Connection con = DBCPDataSource.getConnection();
+            Statement stat = con.createStatement();
+            stat.executeUpdate(insertStatement);
+            ResultSet keys = stat.getGeneratedKeys();
+            if (keys.next()) {
+                generatedId = keys.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL-fout bij insertDataAndGetId(): " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.err.println("Null-waarde bij insertDataAndGetId()");
+        } catch (RuntimeException e) {
+            System.err.println("Onverwachte fout: " + e.getMessage());
+        }
+
+        return generatedId;
+    }
 }

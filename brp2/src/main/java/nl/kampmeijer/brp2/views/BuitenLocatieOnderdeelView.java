@@ -6,6 +6,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import nl.kampmeijer.brp2.models.BuitenLocatieOnderdeel;
+import nl.kampmeijer.brp2.models.Locatie;
 import nl.kampmeijer.brp2.models.Onderdeel;
 import nl.kampmeijer.brp2.services.BuitenLocatieOnderdeelService;
 import nl.kampmeijer.brp2.services.OnderdeelService;
@@ -54,6 +55,14 @@ public class BuitenLocatieOnderdeelView {
         gevelNaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         blootstellingnaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
+        listview.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(BuitenLocatieOnderdeel item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.locatieOnderdeelInfo());
+            }
+        });
+
         loadBuitenLocatiesOnderdelen();
         loadOnderdelen();
 
@@ -78,6 +87,7 @@ public class BuitenLocatieOnderdeelView {
     }
 
     private void addBuitenLocatieOnderdeel() {
+        Locatie locatie = new Locatie("Buitenshuis");
         Onderdeel onderdeelNaamBox = onderdeelComboBox.getSelectionModel().getSelectedItem();
         String gevelNaamInput = gevelNaamField.getText().trim();
         String blootstellingNaamInput = blootstellingNaamField.getText().trim();
@@ -87,24 +97,20 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (isValidInput(gevelNaamInput)) {
+        if (isInvalidInput(gevelNaamInput)) {
             validationLabel.setText("Gevel is verplicht (2–50 tekens)");
             return;
         }
 
-        if (isValidInput(blootstellingNaamInput)) {
+        if (isInvalidInput(blootstellingNaamInput)) {
             validationLabel.setText("Blootstelling is verplicht (2–50 tekens)");
             return;
         }
 
         try {
-            if (buitenLocatieOnderdeelService.add(onderdeelNaamBox.getOnderdeelNaam(), gevelNaamInput, blootstellingNaamInput)) {
-                listview.getItems().add(new BuitenLocatieOnderdeel(1, null, onderdeelNaamBox, gevelNaamInput, blootstellingNaamInput));
-                onderdeelComboBox.getSelectionModel().clearSelection();
-                gevelNaamField.clear();
-                blootstellingNaamField.clear();
-                validationLabel.setText("");
-            }
+            BuitenLocatieOnderdeel newBLO = buitenLocatieOnderdeelService.add(locatie, onderdeelNaamBox, gevelNaamInput, blootstellingNaamInput);
+            listview.getItems().add(newBLO);
+            clearForm();
         } catch (RuntimeException e) {
             if ("INVALID_INPUT".equals(e.getMessage())) {
                 validationLabel.setText("Ongeldige invoer");
@@ -130,12 +136,12 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (isValidInput(gevelNaamInput)) {
+        if (isInvalidInput(gevelNaamInput)) {
             validationLabel.setText("Voer een geldige nieuwe Gevel naam in");
             return;
         }
 
-        if (isValidInput(blootstellingNaamInput)) {
+        if (isInvalidInput(blootstellingNaamInput)) {
             validationLabel.setText("Voer een geldige nieuwe Blootstelling naam in");
             return;
         }
@@ -152,7 +158,7 @@ public class BuitenLocatieOnderdeelView {
                 validationLabel.setText("");
             }
         } catch (RuntimeException e) {
-            validationLabel.setText("Fout bij aanpassen locatie");
+            validationLabel.setText("Fout bij aanpassen BuitenLocatieOnderdeel");
         }
     }
 
@@ -200,13 +206,20 @@ public class BuitenLocatieOnderdeelView {
         }
     }
 
+    private void clearForm() {
+        onderdeelComboBox.getSelectionModel().clearSelection();
+        gevelNaamField.clear();
+        blootstellingNaamField.clear();
+        validationLabel.setText("");
+    }
+
     /**
      * Validates the input
      *
      * @param input the input string
      * @return true if valid, false otherwise
      */
-    private boolean isValidInput(String input) {
+    private boolean isInvalidInput(String input) {
 
         return input == null || input.length() < 2 || input.length() > 50;
     }
