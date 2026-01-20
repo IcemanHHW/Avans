@@ -1,10 +1,9 @@
 package nl.kampmeijer.brp2.models;
 
 public class GemeenteMonument {
-    private int uniekNummer;
-    private String straat, huisNr, huisLetter, postcode, plaats;
+    private String uniekNummer, straat, huisNr, huisLetter, postcode, plaats;
 
-    public  GemeenteMonument(int uniekNummer, String straat, String huisNr, String huisLetter, String postcode, String plaats) {
+    public  GemeenteMonument(String uniekNummer, String straat, String huisNr, String huisLetter, String postcode, String plaats) {
         this.uniekNummer = uniekNummer;
         this.straat = straat;
         this.huisNr = huisNr;
@@ -13,11 +12,11 @@ public class GemeenteMonument {
         this.plaats = plaats;
     }
 
-    public int getUniekNummer() {
+    public String getUniekNummer() {
         return uniekNummer;
     }
 
-    public void setUniekNummer(int uniekNummer) {
+    public void setUniekNummer(String uniekNummer) {
         this.uniekNummer = uniekNummer;
     }
 
