@@ -49,11 +49,9 @@ public class BuitenLocatieOnderdeelService {
             int loId = insertDataAndGetId(
                     "INSERT INTO locatiesonderdelen (locatienaam, onderdeelnaam, gevelnaam, blootstellingnaam) " +
                             "VALUES ('Buitenshuis', '" + onderdeel.getOnderdeelNaam() + "', '" + gevelNaam + "', '" + blootstellingNaam + "'");
-
             if (loId <= 0) {
                 throw new RuntimeException("DATABASE_INSERT_ERROR");
             }
-
             return new BuitenLocatieOnderdeel(loId, locatie, onderdeel, gevelNaam, blootstellingNaam);
         } catch (IllegalArgumentException e) {
             System.err.println("Ongeldige invoer: " + e.getMessage());
