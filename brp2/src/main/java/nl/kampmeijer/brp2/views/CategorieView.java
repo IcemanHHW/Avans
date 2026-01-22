@@ -9,6 +9,8 @@ import nl.kampmeijer.brp2.models.Categorie;
 import org.jetbrains.annotations.NotNull;
 import nl.kampmeijer.brp2.services.CategorieService;
 
+import static nl.kampmeijer.brp2.helpers.ValidationHelper.validateLength;
+
 public class CategorieView {
     private final Label validationLabel = new Label();
     private final TextField textField = new TextField();
@@ -67,8 +69,7 @@ public class CategorieView {
     private void addCategorie() {
         String input = textField.getText().trim();
 
-        if (isValidInput(input)) {
-            validationLabel.setText("Categorie is verplicht (2–50 tekens)");
+        if (!validateLength(textField, 2, 50, "Categorie is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -96,8 +97,7 @@ public class CategorieView {
             return;
         }
 
-        if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe Categorie naam in");
+        if (!validateLength(textField, 2, 50, "Voer een geldige nieuwe Categorie naam in (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -140,16 +140,5 @@ public class CategorieView {
         } catch (RuntimeException e) {
             validationLabel.setText("Fout bij verwijderen Categorie");
         }
-    }
-
-    /**
-     * Validates the input
-     *
-     * @param input the input string
-     * @return true if valid, false otherwise
-     */
-    private boolean isValidInput(String input) {
-
-        return input == null || input.length() < 2 || input.length() > 50;
     }
 }

@@ -12,6 +12,8 @@ import nl.kampmeijer.brp2.services.BinnenLocatieOnderdeelService;
 import nl.kampmeijer.brp2.services.OnderdeelService;
 import org.jetbrains.annotations.NotNull;
 
+import static nl.kampmeijer.brp2.helpers.ValidationHelper.validateLength;
+
 public class BinnenLocatieOnderdeelView {
     private final TextField ruimteNaamField = new TextField(), verdiepingNummerField = new TextField();
     private final Label validationLabel = new Label();
@@ -55,7 +57,7 @@ public class BinnenLocatieOnderdeelView {
         ruimteNaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         verdiepingNummerlabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-        listview.setCellFactory(lv -> new ListCell<>() {
+        listview.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(BinnenLocatieOnderdeel item, boolean empty) {
                 super.updateItem(item, empty);
@@ -97,13 +99,11 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (isInvalidInput(ruimteNaamInput)) {
-            validationLabel.setText("Ruimte is verplicht (2–50 tekens)");
+        if (!validateLength(ruimteNaamField, 2, 50, "Ruimte is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
-        if (isInvalidInput(verdiepingNummerInput)) {
-            validationLabel.setText("Verdieping is verplicht (2–50 tekens)");
+        if (!validateLength(verdiepingNummerField, 2, 50, "Verdieping is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -136,13 +136,11 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (isInvalidInput(ruimteNaamInput)) {
-            validationLabel.setText("Voer een geldige nieuwe Ruimte naam in");
+        if (!validateLength(ruimteNaamField, 2, 50, "Voer een geldige nieuwe Ruimte naam in (2–50 tekens)", validationLabel)) {
             return;
         }
 
-        if (isInvalidInput(verdiepingNummerInput)) {
-            validationLabel.setText("Voer een geldige nieuwe Verdiepingnummer in");
+        if (!validateLength(ruimteNaamField, 2, 50, "Voer een geldige nieuwe Verdiepingnummer in (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -208,15 +206,5 @@ public class BinnenLocatieOnderdeelView {
         ruimteNaamField.clear();
         verdiepingNummerField.clear();
         validationLabel.setText("");
-    }
-
-    /**
-     * Validates the input
-     *
-     * @param input the input string
-     * @return true if valid, false otherwise
-     */
-    private boolean isInvalidInput(String input) {
-        return input == null || input.length() < 2 || input.length() > 50;
     }
 }

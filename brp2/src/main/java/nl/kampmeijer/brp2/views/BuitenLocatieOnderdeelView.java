@@ -12,6 +12,8 @@ import nl.kampmeijer.brp2.services.BuitenLocatieOnderdeelService;
 import nl.kampmeijer.brp2.services.OnderdeelService;
 import org.jetbrains.annotations.NotNull;
 
+import static nl.kampmeijer.brp2.helpers.ValidationHelper.validateLength;
+
 public class BuitenLocatieOnderdeelView {
     private final TextField gevelNaamField = new TextField(), blootstellingNaamField = new TextField();
     private final Label validationLabel = new Label();
@@ -55,7 +57,7 @@ public class BuitenLocatieOnderdeelView {
         gevelNaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         blootstellingnaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-        listview.setCellFactory(lv -> new ListCell<>() {
+        listview.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(BuitenLocatieOnderdeel item, boolean empty) {
                 super.updateItem(item, empty);
@@ -97,13 +99,11 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (isInvalidInput(gevelNaamInput)) {
-            validationLabel.setText("Gevel is verplicht (2–50 tekens)");
+        if (!validateLength(gevelNaamField, 2, 50, "Gevel is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
-        if (isInvalidInput(blootstellingNaamInput)) {
-            validationLabel.setText("Blootstelling is verplicht (2–50 tekens)");
+        if (!validateLength(gevelNaamField, 2, 50, "Blootstelling is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -136,13 +136,11 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (isInvalidInput(gevelNaamInput)) {
-            validationLabel.setText("Voer een geldige nieuwe Gevel naam in");
+        if (!validateLength(gevelNaamField, 2, 50, "Voer een geldige nieuwe Gevel naam in (2–50 tekens)", validationLabel)) {
             return;
         }
 
-        if (isInvalidInput(blootstellingNaamInput)) {
-            validationLabel.setText("Voer een geldige nieuwe Blootstelling naam in");
+        if (!validateLength(gevelNaamField, 2, 50, "Voer een geldige nieuwe Blootstelling naam in (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -211,16 +209,5 @@ public class BuitenLocatieOnderdeelView {
         gevelNaamField.clear();
         blootstellingNaamField.clear();
         validationLabel.setText("");
-    }
-
-    /**
-     * Validates the input
-     *
-     * @param input the input string
-     * @return true if valid, false otherwise
-     */
-    private boolean isInvalidInput(String input) {
-
-        return input == null || input.length() < 2 || input.length() > 50;
     }
 }

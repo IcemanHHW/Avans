@@ -9,6 +9,8 @@ import nl.kampmeijer.brp2.models.Onderdeel;
 import nl.kampmeijer.brp2.services.OnderdeelService;
 import org.jetbrains.annotations.NotNull;
 
+import static nl.kampmeijer.brp2.helpers.ValidationHelper.validateLength;
+
 public class OnderdeelView {
     private final Label validationLabel = new Label();
     private final TextField textField = new TextField();
@@ -67,8 +69,7 @@ public class OnderdeelView {
     private void addOnderdeel() {
         String input = textField.getText().trim();
 
-        if (isValidInput(input)) {
-            validationLabel.setText("Onderdeel is verplicht (2–50 tekens)");
+        if (!validateLength(textField, 2, 50, "Onderdeel is verplicht (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -96,8 +97,7 @@ public class OnderdeelView {
             return;
         }
 
-        if (isValidInput(input)) {
-            validationLabel.setText("Voer een geldige nieuwe onderdeel naam in");
+        if (!validateLength(textField, 2, 50, "Voer een geldige nieuwe onderdeel naam in (2–50 tekens)", validationLabel)) {
             return;
         }
 
@@ -140,16 +140,5 @@ public class OnderdeelView {
         } catch (RuntimeException e) {
             validationLabel.setText("Fout bij verwijderen onderdeel");
         }
-    }
-
-    /**
-     * Validates the input
-     *
-     * @param input the input string
-     * @return true if valid, false otherwise
-     */
-    private boolean isValidInput(String input) {
-
-        return input == null || input.length() < 2 || input.length() > 50;
     }
 }
