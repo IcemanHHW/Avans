@@ -11,58 +11,64 @@ import static nl.kampmeijer.brp2.database.DatabaseHelper.getData;
 import static nl.kampmeijer.brp2.database.DatabaseHelper.insertData;
 
 public class AanvraagGemeenteMonumentService {
-    public List<String> getAll() {
-        List<String> aanvragenGemeenteMonumenten = new ArrayList<>();
+    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("");
 
+    public List<AanVraagGemeenteMonument> getAll() {
+        List<AanVraagGemeenteMonument> aanvragenGemeenteMonumenten = new ArrayList<>();
+        String sql =
+                "SELECT " +
+                        "gma.aanvraagnummer AS aanvraagnummer, " +
+                        "gma.unieknummer AS unieknummer, " +
+                        "c.categorienaam AS categorie_naam, " +
+
+                        "lo.lo_id AS lo_id, " +
+                        "lo.locatienaam AS locatie_naam, " +
+                        "lo.onderdeelnaam as onderdeel_naam, " +
+                        "lo.ruimtenaam AS ruimte_naam, " +
+                        "lo.verdiepingnummer AS verdieping_nummer, " +
+                        "lo.gevelnaam AS gevel_naam, " +
+                        "lo.blootstellingnaam AS blootstelling_naam " +
+
+                        "FROM gemeentemonumentenaanvragen gma " +
+                        "JOIN categorieen c ON c.categorie_id = gma.categorie_id " +
+                        "JOIN locatiesonderdelen lo ON lo.lo_id = gma.lo_id";
         try {
-            ResultSet r = getData("SELECT " +
-                    "gma.aanvraagnummer, " +
-                    "gma.unieknummer, " +
-                    "gma.categorienaam, " +
-                    "gma.lo_id, " +
-                    "c.categorienaam AS categorie_naam " +
-                    "lo.locatienaam AS locatie_naam " +
-                    "lo.onderdeelnaam AS onderdeel_naam " +
-                    "lo.ruimtenaam AS ruimte_naam " +
-                    "lo.verdiepingnummer AS verdieping_nummer " +
-                    "lo.onderdeelnaam AS onderdeel_naam " +
-                    "lo.gevelnaam AS gevel_naam " +
-                    "lo.blootstellingnaam AS blootstelling_naam " +
-                    "FROM gemeentemonumentenaanvragen gma" +
-                    "JOIN locatiesonderdelen lo ON (lo.lo_id = gma.lo_id)'");
+            ResultSet r = getData(sql);
+
             while (r.next()) {
-                Categorie categorie = new Categorie(r.getString("categorienaam"));
+                String uniekNummer = r.getString("unieknummer");
+                GemeenteMonument gemeenteMonument = gemeenteMonumentService.getByUniekNummer(uniekNummer);
+                Categorie categorie = new Categorie(r.getString("categorie_naam"));
                 Onderdeel onderdeel = new Onderdeel(r.getString("onderdeel_naam"));
-                Locatie locatienaam = new Locatie(r.getString("locatie_naam"));
-                LocatieOnderdeel locatieOnderdeel = null;
-
-                if (locatienaam.getLocatieNaam().equals("Binnenshuis")) {
-                   locatieOnderdeel = new BinnenLocatieOnderdeel(
-                           r.getInt("lo_id"),
-                           locatienaam,
-                           onderdeel,
-                           r.getString("ruimte_naam"),
-                           r.getString("verdieping_nummer")
+                Locatie locatie = new Locatie(r.getString("locatie_naam"));
+                int loId = r.getInt("lo_id");
+                LocatieOnderdeel locatieOnderdeel;
+                if ("Binnenshuis".equalsIgnoreCase(locatie.getLocatieNaam())) {
+                    locatieOnderdeel = new BinnenLocatieOnderdeel(
+                            loId,
+                            locatie,
+                            onderdeel,
+                            r.getString("ruimte_naam"),
+                            r.getString("verdieping_nummer")
                     );
-                }
-
-                if (locatienaam.getLocatieNaam().equals("Buitenshuis")) {
+                } else if ("Buitenshuis".equalsIgnoreCase(locatie.getLocatieNaam())) {
                     locatieOnderdeel = new BuitenLocatieOnderdeel(
-                            r.getInt("lo_id"),
-                            locatienaam,
+                            loId,
+                            locatie,
                             onderdeel,
                             r.getString("gevel_naam"),
                             r.getString("blootstelling_naam")
                     );
+                } else {
+                    throw new RuntimeException("ONBEKENDE_LOCATIE");
                 }
-
                 AanVraagGemeenteMonument aanvraagGemeenteMonument = new AanVraagGemeenteMonument(
                         r.getInt("aanvraagnummer"),
                         categorie,
                         locatieOnderdeel,
-                        null
-                );
-                aanvragenGemeenteMonumenten.add(aanvraagGemeenteMonument.toString());
+                        gemeenteMonument
+                        );
+                aanvragenGemeenteMonumenten.add(aanvraagGemeenteMonument);
             }
         } catch (SQLException e) {
             System.err.println("SQL-fout bij ophalen AanvragenGemeenteMonumenten: " + e.getMessage());
