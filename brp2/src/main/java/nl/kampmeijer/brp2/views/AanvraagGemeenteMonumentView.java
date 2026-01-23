@@ -1,14 +1,17 @@
 package nl.kampmeijer.brp2.views;
 
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 import nl.kampmeijer.brp2.models.*;
 import nl.kampmeijer.brp2.services.*;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +28,8 @@ public class AanvraagGemeenteMonumentView {
     private final BinnenLocatieOnderdeelService binnenLocatieOnderdeelService = new BinnenLocatieOnderdeelService();
     private final BuitenLocatieOnderdeelService buitenLocatieOnderdeelService = new BuitenLocatieOnderdeelService();
     private final AanvraagGemeenteMonumentService aanvraagGemeenteMonumentService = new AanvraagGemeenteMonumentService();
+    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
+    private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
 
     public AanvraagGemeenteMonumentView(@NotNull GridPane root) {
         root.setPadding(new Insets(20));
@@ -53,6 +58,8 @@ public class AanvraagGemeenteMonumentView {
         addButton.setPrefSize(120, 30);
         addButton.setStyle("-fx-font-size: 16px;");
 
+        TextField gemeenteMonumentSearchField = new TextField();
+        gemeenteMonumentSearchField.setPromptText("Zoek op straat of postcode");
         binnenLocatieOnderdeellabel.setVisible(false);
         binnenLocatieOnderdeellabel.setVisible(false);
         buitenLocatieOnderdeellabel.setVisible(false);
@@ -61,7 +68,7 @@ public class AanvraagGemeenteMonumentView {
         formBox.setAlignment(Pos.CENTER);
         formBox.getChildren().addAll(
                 validationLabel,
-                gemeenteMonumentLabel, gemeenteMonumentComboBox,
+                gemeenteMonumentLabel, gemeenteMonumentSearchField, gemeenteMonumentComboBox,
                 categorieLabel, categorieComboBox,
                 locatieLabel, locatieComboBox,
                 binnenLocatieOnderdeellabel, binnenLocatieOnderdeelComboBox,
@@ -78,6 +85,17 @@ public class AanvraagGemeenteMonumentView {
         loadBuitenLocatiesOnderdelen();
 
         locatieComboBox.setOnAction(_ -> showLocatieOnderdeel(binnenLocatieOnderdeellabel, buitenLocatieOnderdeellabel));
+
+        gemeenteMonumentSearchField.textProperty().addListener((_, _, newVal) -> {
+            searchDebounce.stop();
+            searchDebounce.setOnFinished(_ ->
+                    gemeenteMonumentComboBox.getItems().setAll(
+                            gemeenteMonumentService.searchByAdres(newVal, 50)
+                    )
+            );
+            searchDebounce.playFromStart();
+        });
+
         addButton.setOnAction(_ -> addAanvraagGemeenteMonument());
     }
 
@@ -87,17 +105,17 @@ public class AanvraagGemeenteMonumentView {
             binnenLocatieOnderdeellabel.setVisible(true);
             binnenLocatieOnderdeelComboBox.setVisible(true);
             buitenLocatieOnderdeellabel.setVisible(false);
-            buitenLocatieOnderdeellabel.setVisible(false);
+            buitenLocatieOnderdeelComboBox.setVisible(false);
         } else if (selectedLocatie.getLocatieNaam().equals("Buitenshuis")) {
             buitenLocatieOnderdeellabel.setVisible(true);
             buitenLocatieOnderdeelComboBox.setVisible(true);
             binnenLocatieOnderdeellabel.setVisible(false);
-            binnenLocatieOnderdeellabel.setVisible(false);
+            binnenLocatieOnderdeelComboBox.setVisible(false);
         } else {
             binnenLocatieOnderdeellabel.setVisible(false);
-            binnenLocatieOnderdeellabel.setVisible(false);
+            binnenLocatieOnderdeelComboBox.setVisible(false);
             buitenLocatieOnderdeellabel.setVisible(false);
-            buitenLocatieOnderdeellabel.setVisible(false);
+            buitenLocatieOnderdeelComboBox.setVisible(false);
         }
     }
 
