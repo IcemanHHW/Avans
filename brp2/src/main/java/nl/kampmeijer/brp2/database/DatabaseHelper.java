@@ -74,6 +74,12 @@ public class DatabaseHelper {
         return result;
     }
 
+    /**
+     * Executes an insert statement and returns the generated ID.
+     *
+     * @param insertStatement the SQL insert statement to be executed
+     * @return the generated ID
+     */
     public static int insertDataAndGetId(String insertStatement) {
         int generatedId = -1;
 

@@ -12,9 +12,24 @@ import java.util.Map;
 import static nl.kampmeijer.brp2.database.DatabaseHelper.getData;
 import static nl.kampmeijer.brp2.database.DatabaseHelper.insertData;
 
+/**
+ * Service class for managing {@link AanVraagGemeenteMonument} entities.
+ *
+ * <p>This class handles database interactions for retrieving and inserting monument requests,
+ * as well as utility methods for counting requests by category or location type.</p>
+ */
 public class AanvraagGemeenteMonumentService {
-    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("");
+    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
 
+    /**
+     * Retrieves all {@link AanVraagGemeenteMonument} from the database.
+     *
+     * <p>Each request is populated with its corresponding {@link Categorie}, {@link LocatieOnderdeel},
+     * and {@link GemeenteMonument}.</p>
+     *
+     * @return a list of {@link AanVraagGemeenteMonument} objects
+     * @throws RuntimeException if a database error occurs or a null value is encountered
+     */
     public List<AanVraagGemeenteMonument> getAll() {
         List<AanVraagGemeenteMonument> aanvragenGemeenteMonumenten = new ArrayList<>();
         String sql =
@@ -22,7 +37,6 @@ public class AanvraagGemeenteMonumentService {
                         "gma.aanvraagnummer AS aanvraagnummer, " +
                         "gma.unieknummer AS unieknummer, " +
                         "c.categorienaam AS categorie_naam, " +
-
                         "lo.lo_id AS lo_id, " +
                         "lo.locatienaam AS locatie_naam, " +
                         "lo.onderdeelnaam as onderdeel_naam, " +
@@ -30,7 +44,6 @@ public class AanvraagGemeenteMonumentService {
                         "lo.verdiepingnummer AS verdieping_nummer, " +
                         "lo.gevelnaam AS gevel_naam, " +
                         "lo.blootstellingnaam AS blootstelling_naam " +
-
                         "FROM gemeentemonumentenaanvragen gma " +
                         "JOIN categorieen c ON c.categorie_id = gma.categorie_id " +
                         "JOIN locatiesonderdelen lo ON lo.lo_id = gma.lo_id";
@@ -85,6 +98,15 @@ public class AanvraagGemeenteMonumentService {
         return aanvragenGemeenteMonumenten;
     }
 
+    /**
+     * Adds a new {@link AanVraagGemeenteMonument} to the database.
+     *
+     * @param categorie        the {@link Categorie} of the monument request
+     * @param locatieOnderdeel the {@link LocatieOnderdeel} associated with the request
+     * @param gemeenteMonument the selected {@link GemeenteMonument} for the request
+     * @return true if the insert was successful, false otherwise
+     * @throws RuntimeException if the input is invalid or a database error occurs
+     */
     public boolean add(Categorie categorie, LocatieOnderdeel locatieOnderdeel, GemeenteMonument gemeenteMonument) {
         try {
             int result = insertData(
@@ -100,6 +122,11 @@ public class AanvraagGemeenteMonumentService {
         }
     }
 
+    /**
+     * Counts the number of requests grouped by their {@link Categorie}.
+     *
+     * @return a map with the category name as the key and the number of requests as the value
+     */
     public Map<String, Integer> countByCategorie() {
         Map<String, Integer> result = new HashMap<>();
 
@@ -111,6 +138,11 @@ public class AanvraagGemeenteMonumentService {
         return result;
     }
 
+    /**
+     * Counts the number of requests for Binnen- versus Buitenshuis locations.
+     *
+     * @return a map with keys "Binnenshuis" and "Buitenshuis" and their corresponding counts
+     */
     public Map<String, Integer> countBinnenVsBuiten() {
         Map<String, Integer> result = new HashMap<>();
         result.put("Binnenshuis", 0);

@@ -8,6 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVReader {
+    /**
+     * Imports GemeenteMonument records from a CSV file.
+     *
+     * <p>The first line of the CSV file is treated as a header and ignored.
+     * Each subsequent line is parsed into a {@link GemeenteMonument} object
+     * if it contains valid data.</p>
+     *
+     * <p>Rows are skipped when:
+     * <ul>
+     *     <li>The row has fewer than the required number of columns</li>
+     *     <li>Required fields are empty</li>
+     *     <li>The uniekNummer does not start with {@code "GM-"}</li>
+     * </ul>
+     * </p>
+     *
+     * @param filePath the path to the CSV file
+     * @return a list of successfully imported {@link GemeenteMonument} objects
+     */
     public List<GemeenteMonument> importCsv(String filePath) {
         List<GemeenteMonument> monumenten = new ArrayList<>();
 
