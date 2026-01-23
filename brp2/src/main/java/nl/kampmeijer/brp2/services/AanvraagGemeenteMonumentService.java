@@ -5,7 +5,9 @@ import nl.kampmeijer.brp2.models.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static nl.kampmeijer.brp2.database.DatabaseHelper.getData;
 import static nl.kampmeijer.brp2.database.DatabaseHelper.insertData;
@@ -96,5 +98,32 @@ public class AanvraagGemeenteMonumentService {
             System.err.println("Onverwachte fout: " + e.getMessage());
             throw e;
         }
+    }
+
+    public Map<String, Integer> countByCategorie() {
+        Map<String, Integer> result = new HashMap<>();
+
+        for (AanVraagGemeenteMonument aanvraag : getAll()) {
+            String naam = aanvraag.getCategorie().getCategorieNaam();
+            result.put(naam, result.getOrDefault(naam, 0) + 1);
+        }
+
+        return result;
+    }
+
+    public Map<String, Integer> countBinnenVsBuiten() {
+        Map<String, Integer> result = new HashMap<>();
+        result.put("Binnenshuis", 0);
+        result.put("Buitenshuis", 0);
+
+        for (AanVraagGemeenteMonument aanvraag : getAll()) {
+            if (aanvraag.getLocatieOnderdeel() instanceof BinnenLocatieOnderdeel) {
+                result.put("Binnenshuis", result.get("Binnenshuis") + 1);
+            } else if (aanvraag.getLocatieOnderdeel() instanceof BuitenLocatieOnderdeel) {
+                result.put("Buitenshuis", result.get("Buitenshuis") + 1);
+            }
+        }
+
+        return result;
     }
 }

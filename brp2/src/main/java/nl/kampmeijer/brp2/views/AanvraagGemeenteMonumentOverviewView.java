@@ -2,8 +2,10 @@ package nl.kampmeijer.brp2.views;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -11,6 +13,7 @@ import nl.kampmeijer.brp2.models.AanVraagGemeenteMonument;
 import nl.kampmeijer.brp2.models.GemeenteMonument;
 import nl.kampmeijer.brp2.services.AanvraagGemeenteMonumentService;
 import org.jetbrains.annotations.NotNull;
+import java.util.Map;
 
 public class AanvraagGemeenteMonumentOverviewView {
     private final TextField categorieNaamField = new TextField(), locatieOnderdeelField = new TextField(), gemeenteMonumentField = new TextField();
@@ -38,20 +41,25 @@ public class AanvraagGemeenteMonumentOverviewView {
         categorieNaamField.setEditable(false);
         locatieOnderdeelField.setEditable(false);
 
-        VBox formBox = new VBox(8);
-        formBox.getChildren().addAll(
-                listview,
-                validationLabel,
-                gemeenteMonumentLabel,
-                gemeenteMonumentField,
-                categorieLabel,
-                categorieNaamField,
-                locatieOnderdeellabel,
-                locatieOnderdeelField
+        VBox detailsBox = new VBox(8,
+                gemeenteMonumentLabel, gemeenteMonumentField,
+                categorieLabel, categorieNaamField,
+                locatieOnderdeellabel, locatieOnderdeelField
+        );
+
+        VBox leftBox = new VBox(10,
+                listview, validationLabel, detailsBox
+        );
+        leftBox.setPrefWidth(400);
+
+        HBox chartsBox = new HBox(20,
+                createCategorieChart(),
+                createBinnenBuitenChart()
         );
 
         root.add(backButton, 0, 0);
-        root.add(formBox, 1, 1);
+        root.add(leftBox, 1, 1);
+        root.add(chartsBox, 2, 1);
 
         listview.setCellFactory(_ -> new ListCell<>() {
             @Override
@@ -61,9 +69,7 @@ public class AanvraagGemeenteMonumentOverviewView {
             }
         });
 
-        listview.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((_, _, selected) -> showDetails(selected));
+        listview.getSelectionModel().selectedItemProperty().addListener((_, _, selected) -> showDetails(selected));
 
         loadAanvragenGemeenteMonumenten();
     }
@@ -89,13 +95,8 @@ public class AanvraagGemeenteMonumentOverviewView {
             return;
         }
 
-        categorieNaamField.setText(
-                aanvraag.getCategorie().getCategorieNaam()
-        );
-
-        locatieOnderdeelField.setText(
-                aanvraag.getLocatieOnderdeel().locatieOnderdeelInfo()
-        );
+        categorieNaamField.setText(aanvraag.getCategorie().getCategorieNaam());
+        locatieOnderdeelField.setText(aanvraag.getLocatieOnderdeel().locatieOnderdeelInfo());
 
         GemeenteMonument monument = aanvraag.getGemeenteMonument();
         if (monument != null) {
@@ -109,6 +110,33 @@ public class AanvraagGemeenteMonumentOverviewView {
         } else {
             gemeenteMonumentField.setText("Onbekend monument");
         }
+    }
+
+    private @NotNull BarChart<String, Number> createCategorieChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        BarChart<String, Number> chart = new BarChart<>(xAxis, yAxis);
+        chart.setTitle("Aanvragen per categorie");
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        Map<String, Integer> data = aanvraagGemeenteMonumentService.countByCategorie();
+
+        data.forEach((categorie, count) ->
+                series.getData().add(new XYChart.Data<>(categorie, count))
+        );
+
+        chart.getData().add(series);
+        chart.setLegendVisible(false);
+        return chart;
+    }
+
+    private @NotNull PieChart createBinnenBuitenChart() {
+        PieChart chart = new PieChart();
+        chart.setTitle("Binnenshuis of buitenshuis");
+        Map<String, Integer> data = aanvraagGemeenteMonumentService.countBinnenVsBuiten();
+        data.forEach((label, count) ->
+                chart.getData().add(new PieChart.Data(label, count))
+        );
+        return chart;
     }
 
     private void clearFields() {
