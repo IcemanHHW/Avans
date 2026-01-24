@@ -15,6 +15,13 @@ import nl.kampmeijer.brp2.services.AanvraagGemeenteMonumentService;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
+/**
+ * Overview view for {@link AanVraagGemeenteMonument} entities.
+ * <p>
+ * This view displays a list of aanvragen, detailed information for the selected
+ * aanvraag, and visual charts showing statistics per category and location type
+ * (binnenshuis vs buitenshuis).
+ */
 public class AanvraagGemeenteMonumentOverviewView {
     private final TextField categorieNaamField = new TextField(), locatieOnderdeelField = new TextField(), gemeenteMonumentField = new TextField();
     private final Label validationLabel = new Label();
@@ -89,6 +96,12 @@ public class AanvraagGemeenteMonumentOverviewView {
         }
     }
 
+    /**
+     * Displays the details of the selected aanvraag.
+     *
+     * @param aanvraag the selected {@link AanVraagGemeenteMonument},
+     *                 or {@code null} if no selection is made
+     */
     private void showDetails(AanVraagGemeenteMonument aanvraag) {
         if (aanvraag == null) {
             clearFields();
@@ -112,6 +125,11 @@ public class AanvraagGemeenteMonumentOverviewView {
         }
     }
 
+    /**
+     * Creates a bar chart showing the number of aanvragen per category.
+     *
+     * @return a {@link BarChart} containing category statistics
+     */
     private @NotNull BarChart<String, Number> createCategorieChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -129,6 +147,12 @@ public class AanvraagGemeenteMonumentOverviewView {
         return chart;
     }
 
+    /**
+     * Creates a pie chart showing the distribution between binnenshuis
+     * and buitenshuis aanvragen.
+     *
+     * @return a {@link PieChart} containing location type statistics
+     */
     private @NotNull PieChart createBinnenBuitenChart() {
         PieChart chart = new PieChart();
         chart.setTitle("Binnenshuis of buitenshuis");

@@ -11,8 +11,25 @@ import java.util.List;
 
 import static nl.kampmeijer.brp2.database.DatabaseHelper.*;
 
+/**
+ * Service class for managing {@link BinnenLocatieOnderdeel} entities.
+ *
+ * <p>This service provides CRUD-like functionality for location components
+ * that belong to the "Binnenshuis" location type. Data is retrieved and
+ * stored using direct SQL queries.</p>
+ */
 public class BinnenLocatieOnderdeelService {
 
+    /**
+     * Retrieves all "Binnenshuis" location components from the database.
+     *
+     * <p>The result is returned as a list of formatted strings generated
+     * by {@link BinnenLocatieOnderdeel#locatieOnderdeelInfo()}.</p>
+     *
+     * @return a list of formatted BinnenLocatieOnderdeel descriptions
+     *
+     * @throws RuntimeException if a database error or unexpected error occurs
+     */
     public List<String> getAll() {
         List<String> binnenLocatieOnderdelen = new ArrayList<>();
 
@@ -44,6 +61,21 @@ public class BinnenLocatieOnderdeelService {
         return binnenLocatieOnderdelen;
     }
 
+    /**
+     * Inserts a new {@link BinnenLocatieOnderdeel} into the database.
+     *
+     * <p>After insertion, the generated database ID is used to create
+     * and return a new {@link BinnenLocatieOnderdeel} instance.</p>
+     *
+     * @param locatie the location (expected to be "Binnenshuis")
+     * @param onderdeel the associated onderdeel
+     * @param ruimteNaam the room name
+     * @param verdiepingNummer the floor number
+     *
+     * @return the newly created {@link BinnenLocatieOnderdeel}
+     *
+     * @throws RuntimeException if insertion fails or input is invalid
+     */
     public BinnenLocatieOnderdeel add(Locatie locatie, Onderdeel onderdeel, String ruimteNaam, String verdiepingNummer) {
         try {
             int loId = insertDataAndGetId(
@@ -62,6 +94,18 @@ public class BinnenLocatieOnderdeelService {
         }
     }
 
+    /**
+     * Updates an existing {@link BinnenLocatieOnderdeel} in the database.
+     *
+     * @param lo_id the ID of the location component to update
+     * @param newOnderdeelnaam the new onderdeel name
+     * @param newRuimteNaam the new room name
+     * @param newVerdiepingNummer the new floor number
+     *
+     * @return {@code true} if at least one record was updated, otherwise {@code false}
+     *
+     * @throws RuntimeException if a database or unexpected error occurs
+     */
     public static boolean update(int lo_id, String newOnderdeelnaam, String newRuimteNaam, String newVerdiepingNummer) {
         try {
             int result = updateData(
@@ -79,6 +123,15 @@ public class BinnenLocatieOnderdeelService {
         }
     }
 
+    /**
+     * Deletes a {@link BinnenLocatieOnderdeel} from the database.
+     *
+     * @param lo_id the ID of the location component to delete
+     *
+     * @return {@code true} if the record was deleted, otherwise {@code false}
+     *
+     * @throws RuntimeException if a database or unexpected error occurs
+     */
     public static boolean delete(int lo_id) {
         try {
             int result = updateData("DELETE FROM locatiesonderdelen WHERE lo_id = '" + lo_id + "'");
