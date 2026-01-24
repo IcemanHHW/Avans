@@ -17,7 +17,7 @@ public class LocatieView {
     private final ListView<Locatie> listview = new ListView<>();
     private final LocatieService locatieService = new LocatieService();
 
-    public LocatieView(@NotNull GridPane root) {
+    public LocatieView(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
@@ -40,7 +40,7 @@ public class LocatieView {
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
-        //backButton.setOnAction(_ -> onBack.run());
+        backButton.setOnAction(_ -> onBack.run());
 
         locatieLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 

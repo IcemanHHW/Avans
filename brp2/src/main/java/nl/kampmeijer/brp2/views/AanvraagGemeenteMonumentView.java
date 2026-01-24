@@ -31,7 +31,7 @@ public class AanvraagGemeenteMonumentView {
     private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
     private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
 
-    public AanvraagGemeenteMonumentView(@NotNull GridPane root) {
+    public AanvraagGemeenteMonumentView(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(20));
         root.setHgap(10);
         root.setVgap(10);
@@ -54,7 +54,7 @@ public class AanvraagGemeenteMonumentView {
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
-        //backButton.setOnAction(_ -> onBack.run());
+        backButton.setOnAction(_ -> onBack.run());
         addButton.setPrefSize(120, 30);
         addButton.setStyle("-fx-font-size: 16px;");
 

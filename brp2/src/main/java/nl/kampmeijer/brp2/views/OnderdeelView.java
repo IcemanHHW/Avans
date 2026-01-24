@@ -17,7 +17,7 @@ public class OnderdeelView {
     private final ListView<Onderdeel> listview = new ListView<>();
     private final OnderdeelService onderdeelService = new OnderdeelService();
 
-    public OnderdeelView(@NotNull GridPane root) {
+    public OnderdeelView(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
@@ -40,7 +40,7 @@ public class OnderdeelView {
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
-        //backButton.setOnAction(_ -> onBack.run());
+        backButton.setOnAction(_ -> onBack.run());
 
         onderdeelLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 

@@ -28,7 +28,7 @@ public class AanvraagGemeenteMonumentOverviewView {
     private final ListView<AanVraagGemeenteMonument> listview = new ListView<>();
     private final AanvraagGemeenteMonumentService aanvraagGemeenteMonumentService = new AanvraagGemeenteMonumentService();
 
-    public AanvraagGemeenteMonumentOverviewView(@NotNull GridPane root) {
+    public AanvraagGemeenteMonumentOverviewView(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(20));
         root.setHgap(10);
         root.setVgap(10);
@@ -43,6 +43,9 @@ public class AanvraagGemeenteMonumentOverviewView {
         categorieLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         locatieOnderdeellabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         validationLabel.setStyle("-fx-text-fill: red;");
+        backButton.setPrefSize(100, 20);
+        backButton.setStyle("-fx-font-size: 14px;");
+        backButton.setOnAction(_ -> onBack.run());
 
         gemeenteMonumentField.setEditable(false);
         categorieNaamField.setEditable(false);

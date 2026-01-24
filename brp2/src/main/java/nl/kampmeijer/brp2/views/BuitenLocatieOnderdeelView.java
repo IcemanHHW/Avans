@@ -22,7 +22,7 @@ public class BuitenLocatieOnderdeelView {
     private final OnderdeelService onderdeelService = new OnderdeelService();
     private final BuitenLocatieOnderdeelService buitenLocatieOnderdeelService = new BuitenLocatieOnderdeelService();
 
-    public BuitenLocatieOnderdeelView(@NotNull GridPane root) {
+    public BuitenLocatieOnderdeelView(@NotNull GridPane root, Runnable onBack) {
         root.setPadding(new Insets(10));
         root.setHgap(10);
         root.setVgap(10);
@@ -51,7 +51,7 @@ public class BuitenLocatieOnderdeelView {
 
         backButton.setPrefSize(100, 20);
         backButton.setStyle("-fx-font-size: 14px;");
-        //backButton.setOnAction(_ -> onBack.run());
+        backButton.setOnAction(_ -> onBack.run());
 
         onderdeelLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         gevelNaamLabel.setFont(Font.font("System", FontWeight.BOLD, 14));

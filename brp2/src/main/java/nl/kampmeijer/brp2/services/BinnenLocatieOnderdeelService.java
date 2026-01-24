@@ -98,7 +98,7 @@ public class BinnenLocatieOnderdeelService {
      * Updates an existing {@link BinnenLocatieOnderdeel} in the database.
      *
      * @param lo_id the ID of the location component to update
-     * @param newOnderdeelnaam the new onderdeel name
+     * @param newOnderdeelNaam the new onderdeel name
      * @param newRuimteNaam the new room name
      * @param newVerdiepingNummer the new floor number
      *
@@ -106,11 +106,14 @@ public class BinnenLocatieOnderdeelService {
      *
      * @throws RuntimeException if a database or unexpected error occurs
      */
-    public static boolean update(int lo_id, String newOnderdeelnaam, String newRuimteNaam, String newVerdiepingNummer) {
+    public static boolean update(int lo_id, String newOnderdeelNaam, String newRuimteNaam, String newVerdiepingNummer) {
         try {
             int result = updateData(
-                    "UPDATE locatiesonderdelen SET onderdeelnaam = '" + newOnderdeelnaam + ", ruimtenaam = '" + newRuimteNaam + ", verdiepingnummer = '" + newVerdiepingNummer +
-                    "' WHERE lo_id = '" + lo_id + "'"
+                    "UPDATE locatiesonderdelen SET " +
+                            "onderdeelnaam = '" + newOnderdeelNaam +
+                            "', ruimtenaam = '" + newRuimteNaam +
+                            "', verdiepingnummer = '" + newVerdiepingNummer +
+                            "' WHERE lo_id = '" + lo_id + "'"
             );
             return result > 0;
         } catch (NullPointerException e) {
