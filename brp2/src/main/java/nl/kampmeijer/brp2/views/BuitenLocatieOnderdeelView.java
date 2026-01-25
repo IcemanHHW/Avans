@@ -103,7 +103,7 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (!validateLength(gevelNaamField, 2, 50, "Blootstelling is verplicht (2–50 tekens)", validationLabel)) {
+        if (!validateLength(gevelNaamField, 2, 100, "Blootstelling is verplicht (2–100 tekens)", validationLabel)) {
             return;
         }
 
@@ -140,7 +140,7 @@ public class BuitenLocatieOnderdeelView {
             return;
         }
 
-        if (!validateLength(gevelNaamField, 2, 50, "Voer een geldige nieuwe Blootstelling naam in (2–50 tekens)", validationLabel)) {
+        if (!validateLength(gevelNaamField, 2, 100, "Voer een geldige nieuwe Blootstelling naam in (2–100 tekens)", validationLabel)) {
             return;
         }
 

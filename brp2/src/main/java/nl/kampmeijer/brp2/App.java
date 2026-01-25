@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import nl.kampmeijer.brp2.data.CSVReader;
 import nl.kampmeijer.brp2.views.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,12 @@ public class App extends Application {
     }
 
     private void showStartView() {
+        System.out.println(
+                CSVReader.class
+                        .getClassLoader()
+                        .getResource("data/GemeenteMonumenten.csv")
+        );
+
         GridPane root = new GridPane();
         new StartView(root, this::showAanvraagGemeenteMonumentenView, this::showAdminView);
         scene.setRoot(root);

@@ -69,7 +69,7 @@ public class LocatieView {
     private void addLocatie() {
         String input = textField.getText().trim();
 
-        if (!validateLength(textField, 2, 50, "Locatie is verplicht (2–50 tekens)", validationLabel)) {
+        if (!validateLength(textField, 2, 30, "Locatie is verplicht (2–30 tekens)", validationLabel)) {
             return;
         }
 
@@ -97,7 +97,7 @@ public class LocatieView {
             return;
         }
 
-        if (!validateLength(textField, 2, 50, "Voer een geldige nieuwe locatie naam in (2–50 tekens)", validationLabel)) {
+        if (!validateLength(textField, 2, 30, "Voer een geldige nieuwe locatie naam in (2–30 tekens)", validationLabel)) {
             return;
         }
 

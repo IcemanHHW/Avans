@@ -99,11 +99,11 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (!validateLength(ruimteNaamField, 2, 50, "Ruimte is verplicht (2–50 tekens)", validationLabel)) {
+        if (!validateLength(ruimteNaamField, 2, 100, "Ruimte is verplicht (2–100 tekens)", validationLabel)) {
             return;
         }
 
-        if (!validateLength(verdiepingNummerField, 2, 50, "Verdieping is verplicht (2–50 tekens)", validationLabel)) {
+        if (!validateLength(verdiepingNummerField, 1, 10, "Verdieping is verplicht (1–10 tekens)", validationLabel)) {
             return;
         }
 
@@ -136,11 +136,11 @@ public class BinnenLocatieOnderdeelView {
             return;
         }
 
-        if (!validateLength(ruimteNaamField, 2, 50, "Voer een geldige nieuwe Ruimte naam in (2–50 tekens)", validationLabel)) {
+        if (!validateLength(ruimteNaamField, 2, 100, "Voer een geldige nieuwe Ruimte naam in (2–100 tekens)", validationLabel)) {
             return;
         }
 
-        if (!validateLength(ruimteNaamField, 2, 50, "Voer een geldige nieuwe Verdiepingnummer in (2–50 tekens)", validationLabel)) {
+        if (!validateLength(ruimteNaamField, 1, 10, "Voer een geldige nieuwe Verdiepingnummer in (1–10 tekens)", validationLabel)) {
             return;
         }
 

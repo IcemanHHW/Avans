@@ -136,10 +136,25 @@ public class AanvraagGemeenteMonumentOverviewView {
     private @NotNull BarChart<String, Number> createCategorieChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
+
+        yAxis.setAutoRanging(false);
+        yAxis.setTickUnit(1);
+        yAxis.setMinorTickVisible(false);
+        yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis) {
+            @Override
+            public String toString(Number object) {
+                return String.valueOf(object.intValue());
+            }
+        });
+
         BarChart<String, Number> chart = new BarChart<>(xAxis, yAxis);
         chart.setTitle("Aanvragen per categorie");
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         Map<String, Integer> data = aanvraagGemeenteMonumentService.countByCategorie();
+
+        int maxValue = data.values().stream().max(Integer::compareTo).orElse(0);
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(maxValue + 1);
 
         data.forEach((categorie, count) ->
                 series.getData().add(new XYChart.Data<>(categorie, count))

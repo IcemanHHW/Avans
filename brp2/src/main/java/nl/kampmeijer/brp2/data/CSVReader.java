@@ -3,13 +3,14 @@ package nl.kampmeijer.brp2.data;
 import nl.kampmeijer.brp2.models.GemeenteMonument;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CSVReader {
     /**
-     * Imports GemeenteMonument records from a CSV file.
+     * Imports {@link GemeenteMonument} records from a CSV file located on the classpath.
      *
      * <p>The first line of the CSV file is treated as a header and ignored.
      * Each subsequent line is parsed into a {@link GemeenteMonument} object
@@ -23,15 +24,25 @@ public class CSVReader {
      * </ul>
      * </p>
      *
-     * @param filePath the path to the CSV file
+     * @param resourcePath the classpath-relative path to the CSV file
      * @return a list of successfully imported {@link GemeenteMonument} objects
+     * @throws RuntimeException if the CSV resource cannot be found or read
      */
-    public List<GemeenteMonument> importCsv(String filePath) {
+    public List<GemeenteMonument> importCsv(String resourcePath) {
         List<GemeenteMonument> monumenten = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        InputStream inputStream = getClass()
+                .getClassLoader()
+                .getResourceAsStream(resourcePath);
+
+        if (inputStream == null) {
+            throw new RuntimeException("CSV resource not found: " + resourcePath);
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             boolean firstLine = true;
+
             while ((line = reader.readLine()) != null) {
 
                 if (firstLine) {
@@ -40,7 +51,7 @@ public class CSVReader {
                 }
 
                 String[] c = line.split(",");
-                if (c.length < 6) {
+                if (c.length < 8) {
                     continue;
                 }
 

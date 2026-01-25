@@ -61,9 +61,9 @@ public class AanvraagGemeenteMonumentView {
         TextField gemeenteMonumentSearchField = new TextField();
         gemeenteMonumentSearchField.setPromptText("Zoek op straat of postcode");
         binnenLocatieOnderdeellabel.setVisible(false);
-        binnenLocatieOnderdeellabel.setVisible(false);
+        binnenLocatieOnderdeelComboBox.setVisible(false);
         buitenLocatieOnderdeellabel.setVisible(false);
-        buitenLocatieOnderdeellabel.setVisible(false);
+        buitenLocatieOnderdeelComboBox.setVisible(false);
 
         formBox.setAlignment(Pos.CENTER);
         formBox.getChildren().addAll(

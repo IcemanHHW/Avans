@@ -69,7 +69,7 @@ public class OnderdeelView {
     private void addOnderdeel() {
         String input = textField.getText().trim();
 
-        if (!validateLength(textField, 2, 50, "Onderdeel is verplicht (2–50 tekens)", validationLabel)) {
+        if (!validateLength(textField, 2, 150, "Onderdeel is verplicht (2–150 tekens)", validationLabel)) {
             return;
         }
 
@@ -97,7 +97,7 @@ public class OnderdeelView {
             return;
         }
 
-        if (!validateLength(textField, 2, 50, "Voer een geldige nieuwe onderdeel naam in (2–50 tekens)", validationLabel)) {
+        if (!validateLength(textField, 2, 150, "Voer een geldige nieuwe onderdeel naam in (2–150 tekens)", validationLabel)) {
             return;
         }
 

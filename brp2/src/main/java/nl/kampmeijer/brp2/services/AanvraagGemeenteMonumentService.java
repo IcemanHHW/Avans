@@ -1,5 +1,6 @@
 package nl.kampmeijer.brp2.services;
 
+import nl.kampmeijer.brp2.data.CSVReader;
 import nl.kampmeijer.brp2.models.*;
 
 import java.sql.ResultSet;
@@ -45,7 +46,7 @@ public class AanvraagGemeenteMonumentService {
                         "lo.gevelnaam AS gevel_naam, " +
                         "lo.blootstellingnaam AS blootstelling_naam " +
                         "FROM gemeentemonumentenaanvragen gma " +
-                        "JOIN categorieen c ON c.categorie_id = gma.categorie_id " +
+                        "JOIN categorieen c ON c.categorienaam = gma.categorienaam " +
                         "JOIN locatiesonderdelen lo ON lo.lo_id = gma.lo_id";
         try {
             ResultSet r = getData(sql);
