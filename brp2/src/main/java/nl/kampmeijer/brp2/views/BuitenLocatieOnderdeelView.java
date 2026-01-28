@@ -40,11 +40,11 @@ public class BuitenLocatieOnderdeelView {
         root.add(gevelNaamField, 2, 2);
         root.add(blootstellingNaamField, 3, 2);
         Button addButton = new Button("Toevoegen");
-        root.add(addButton, 1, 2);
+        root.add(addButton, 3, 2);
         Button updateButton = new Button("Aanpassen");
-        root.add(updateButton, 1, 3);
+        root.add(updateButton, 3, 3);
         Button deleteButton = new Button("Verwijderen");
-        root.add(deleteButton, 1, 4);
+        root.add(deleteButton, 3, 4);
         root.add(validationLabel, 2, 3);
 
         validationLabel.setStyle("-fx-text-fill: red;");
@@ -75,7 +75,7 @@ public class BuitenLocatieOnderdeelView {
 
     private void loadBuitenLocatiesOnderdelen() {
         try {
-            listview.getItems().addAll((BuitenLocatieOnderdeel) buitenLocatieOnderdeelService.getAll());
+            listview.getItems().addAll(buitenLocatieOnderdeelService.getAll());
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "DATABASE_LOAD_ERROR" ->

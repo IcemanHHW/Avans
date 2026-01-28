@@ -20,7 +20,7 @@ import static nl.kampmeijer.brp2.database.DatabaseHelper.insertData;
  * as well as utility methods for counting requests by category or location type.</p>
  */
 public class AanvraagGemeenteMonumentService {
-    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
+    //private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
 
     /**
      * Retrieves all {@link AanVraagGemeenteMonument} from the database.
@@ -53,7 +53,7 @@ public class AanvraagGemeenteMonumentService {
 
             while (r.next()) {
                 String uniekNummer = r.getString("unieknummer");
-                GemeenteMonument gemeenteMonument = gemeenteMonumentService.getByUniekNummer(uniekNummer);
+                //GemeenteMonument gemeenteMonument = gemeenteMonumentService.getByUniekNummer(uniekNummer);
                 Categorie categorie = new Categorie(r.getString("categorie_naam"));
                 Onderdeel onderdeel = new Onderdeel(r.getString("onderdeel_naam"));
                 Locatie locatie = new Locatie(r.getString("locatie_naam"));
@@ -82,7 +82,7 @@ public class AanvraagGemeenteMonumentService {
                         r.getInt("aanvraagnummer"),
                         categorie,
                         locatieOnderdeel,
-                        gemeenteMonument
+                        null
                         );
                 aanvragenGemeenteMonumenten.add(aanvraagGemeenteMonument);
             }

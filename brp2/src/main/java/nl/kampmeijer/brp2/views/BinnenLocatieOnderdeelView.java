@@ -40,12 +40,12 @@ public class BinnenLocatieOnderdeelView {
         root.add(ruimteNaamField, 2, 2);
         root.add(verdiepingNummerField, 3, 2);
         Button addButton = new Button("Toevoegen");
-        root.add(addButton, 1, 2);
+        root.add(addButton, 3, 2);
         Button updateButton = new Button("Aanpassen");
-        root.add(updateButton, 1, 3);
+        root.add(updateButton, 3, 3);
         Button deleteButton = new Button("Verwijderen");
-        root.add(deleteButton, 1, 4);
-        root.add(validationLabel, 2, 3);
+        root.add(deleteButton, 3, 4);
+        root.add(validationLabel, 3, 3);
 
         validationLabel.setStyle("-fx-text-fill: red;");
 
@@ -75,7 +75,7 @@ public class BinnenLocatieOnderdeelView {
 
     private void loadBinnenLocatiesOnderdelen() {
         try {
-            listview.getItems().addAll((BinnenLocatieOnderdeel) binnenLocatieOnderdeelService.getAll());
+            listview.getItems().addAll(binnenLocatieOnderdeelService.getAll());
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "DATABASE_LOAD_ERROR" ->

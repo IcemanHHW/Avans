@@ -30,8 +30,8 @@ public class BinnenLocatieOnderdeelService {
      *
      * @throws RuntimeException if a database error or unexpected error occurs
      */
-    public List<String> getAll() {
-        List<String> binnenLocatieOnderdelen = new ArrayList<>();
+    public List<BinnenLocatieOnderdeel> getAll() {
+        List<BinnenLocatieOnderdeel> binnenLocatieOnderdelen = new ArrayList<>();
 
         try {
             ResultSet r = getData("SELECT lo_id, locatienaam, onderdeelnaam, ruimtenaam, verdiepingnummer FROM locatiesonderdelen WHERE locatienaam = 'Binnenshuis'");
@@ -39,14 +39,13 @@ public class BinnenLocatieOnderdeelService {
             while (r.next()) {
                 Onderdeel onderdeel = new Onderdeel(r.getString("onderdeelnaam"));
                 Locatie locatienaam = new Locatie(r.getString("locatienaam"));
-                BinnenLocatieOnderdeel binnenLocatieOnderdeel = new BinnenLocatieOnderdeel(
+                binnenLocatieOnderdelen.add(new BinnenLocatieOnderdeel(
                         r.getInt("lo_id"),
                         locatienaam,
                         onderdeel,
                         r.getString("ruimtenaam"),
                         r.getString("verdiepingnummer")
-                );
-                binnenLocatieOnderdelen.add(binnenLocatieOnderdeel.locatieOnderdeelInfo());
+                ));
             }
         } catch (SQLException e) {
             System.err.println("SQL-fout bij ophalen BinnenLocatieOnderdelen: " + e.getMessage());
