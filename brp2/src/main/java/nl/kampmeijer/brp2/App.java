@@ -28,7 +28,7 @@ public class App extends Application {
         System.out.println(
                 CSVReader.class
                         .getClassLoader()
-                        .getResource("data/GemeenteMonumenten.csv")
+                        .getResource("GemeenteMonumenten.csv")
         );
 
         GridPane root = new GridPane();

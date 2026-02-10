@@ -28,7 +28,7 @@ public class AanvraagGemeenteMonumentView {
     private final BinnenLocatieOnderdeelService binnenLocatieOnderdeelService = new BinnenLocatieOnderdeelService();
     private final BuitenLocatieOnderdeelService buitenLocatieOnderdeelService = new BuitenLocatieOnderdeelService();
     private final AanvraagGemeenteMonumentService aanvraagGemeenteMonumentService = new AanvraagGemeenteMonumentService();
-    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("data/GemeenteMonumenten.csv");
+    private final GemeenteMonumentService gemeenteMonumentService = new GemeenteMonumentService("GemeenteMonumenten.csv");
     private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
 
     public AanvraagGemeenteMonumentView(@NotNull GridPane root, Runnable onBack) {
